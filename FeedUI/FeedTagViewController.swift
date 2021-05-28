@@ -25,7 +25,7 @@ final class FeedTagView: UICollectionView {
                 let prevCell = cellForItem(at:path) as! TagCell
                 prevCell.backgroundColor = defaultColor
                 prevCell.tagLabel.textColor = .white
-                prevCell.tagLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+                prevCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
             }
         }
         
@@ -34,7 +34,7 @@ final class FeedTagView: UICollectionView {
                 let tappedCell = cellForItem(at:path) as! TagCell
                 tappedCell.backgroundColor = selectedColor
                 tappedCell.tagLabel.textColor = .black
-                tappedCell.tagLabel.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+                tappedCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
             }
         }
     }
@@ -79,7 +79,7 @@ final class TagCell: UICollectionViewCell {
         cell.configure(name: name)
         
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 15)
         label.text = name
         label.sizeToFit()
         
@@ -92,7 +92,7 @@ final class TagCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 15)
         label.textColor = .white
         return label
     } ()

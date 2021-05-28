@@ -22,7 +22,7 @@ class FeedCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         label.textColor = .white
         return label
     } ()

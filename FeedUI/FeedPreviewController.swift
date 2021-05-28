@@ -30,6 +30,6 @@ extension FeedPreview: UICollectionViewDataSource, UICollectionViewDelegate {
 extension FeedPreview: PinterestLayoutDelegate {
     // return height
     func collectionView(_ collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {        
-        return max(150, photos[indexPath.item].image.size.height / 3)
+        return min(300, max(150, photos[indexPath.item].image.size.height / 3))
     }
 }

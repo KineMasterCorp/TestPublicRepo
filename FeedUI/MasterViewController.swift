@@ -15,30 +15,6 @@ class MasterViewController: UIViewController {
     
     private var layoutConstraints: [NSLayoutConstraint] = .init()
         
-    private lazy var hStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .equalCentering
-        stackView.alignment = .trailing
-        stackView.spacing = 8
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return stackView
-    }()
-        
-    lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.placeholder = "Search"
-        searchBar.autocapitalizationType = .none
-        searchBar.backgroundImage = UIImage()
-        (searchBar.value(forKey: "searchField") as? UITextField)?.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
-        searchBar.delegate = self
-        searchBar.becomeFirstResponder()
-        let frame = CGRect(x: 0, y: 0, width: 100, height: 44)
-        searchBar.frame = frame
-        return searchBar
-      }()
-    
     private lazy var tagLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -172,25 +148,7 @@ class MasterViewController: UIViewController {
                 
         setupHeaderViews()
         setupFeedView()
-                
-        
-//        let safeLayoutGuide = view.safeAreaLayoutGuide
-//
-//        layoutConstraints.append(
-//            contentsOf: [
-//                hStackView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-//                hStackView.centerYAnchor.constraint(equalTo: safeLayoutGuide.centerYAnchor),
-//                hStackView.centerXAnchor.constraint(equalTo: safeLayoutGuide.centerXAnchor),
-//                hStackView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-//                hStackView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-//                hStackView.heightAnchor.constraint(equalToConstant: 52),
-//                ]
-//        )
-//
-//        //hStackView.addArrangedSubview(searchBar)
-//        hStackView.addArrangedSubview(searchButton)
-//        view.addSubview(hStackView)
-        
+
         NSLayoutConstraint.activate(layoutConstraints)
     }
     
@@ -200,10 +158,6 @@ class MasterViewController: UIViewController {
 }
 
 extension MasterViewController: UISearchBarDelegate {
-//    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-//        filterContentForSearchText(searchBar.text!)
-//    }
-    
     func filterContentBy(category: String = "전체") {
         feedCollectionView.filteredPhotos = feedCollectionView.photos.filter({(photo : Photo) -> Bool in
             let doesCategoryMatch = (category == "전체") || (photo.category == category)
@@ -212,32 +166,7 @@ extension MasterViewController: UISearchBarDelegate {
         
         feedCollectionView.reloadData()
     }
-    
-//    func filterContentForSearchText(_ searchText: String) {
-//        feedCollectionView.filteredPhotos = feedCollectionView.photos.filter({(photo : Photo) -> Bool in
-//            let doesCategoryMatch = false
-//
-//            if searchBarIsEmpty() {
-//                return doesCategoryMatch
-//            } else {
-//                return doesCategoryMatch && photo.caption.lowercased().contains(searchText.lowercased())
-//            }
-//        })
-//
-//        feedCollectionView.reloadData()
-//    }
-    
-//    func searchBarIsEmpty() -> Bool {
-//        return searchController.searchBar.text?.isEmpty ?? true
-//    }
 }
-
-//extension MasterViewController: UISearchResultsUpdating {
-//    func updateSearchResults(for searchController: UISearchController) {
-//        let searchBar = searchController.searchBar
-//        filterContentForSearchText(searchController.searchBar.text!)
-//    }
-//}
 
 extension MasterViewController: TagDelegate {
     func notify(tag: String) -> Void {
