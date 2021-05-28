@@ -9,21 +9,35 @@
 /* Begin PBXBuildFile section */
 		9230751E265B664700D411B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230751D265B664700D411B2 /* AppDelegate.swift */; };
 		92307520265B664700D411B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230751F265B664700D411B2 /* SceneDelegate.swift */; };
-		92307522265B664700D411B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307521265B664700D411B2 /* ContentView.swift */; };
-		92307524265B664800D411B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92307523265B664800D411B2 /* Assets.xcassets */; };
-		92307527265B664800D411B2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92307526265B664800D411B2 /* Preview Assets.xcassets */; };
+		92307522265B664700D411B2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307521265B664700D411B2 /* ViewController.swift */; };
 		9230752A265B664800D411B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92307528265B664800D411B2 /* LaunchScreen.storyboard */; };
+		9230753A265B997D00D411B2 /* FeedPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307539265B997D00D411B2 /* FeedPreviewController.swift */; };
+		9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230753B265B9A9D00D411B2 /* PinterestLayout.swift */; };
+		9230753E265B9B9500D411B2 /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230753D265B9B9500D411B2 /* FeedCell.swift */; };
+		92307544265C9B7A00D411B2 /* Photos.plist in Resources */ = {isa = PBXBuildFile; fileRef = 92307542265C9B7900D411B2 /* Photos.plist */; };
+		92307545265C9B7A00D411B2 /* Photos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92307543265C9B7A00D411B2 /* Photos.xcassets */; };
+		92307571265DD2E800D411B2 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307570265DD2E800D411B2 /* Photo.swift */; };
+		92307573265E22FB00D411B2 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307572265E22FB00D411B2 /* MasterViewController.swift */; };
+		92307575265E23E800D411B2 /* FeedTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307574265E23E800D411B2 /* FeedTagViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9230751A265B664700D411B2 /* FeedUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9230751D265B664700D411B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9230751F265B664700D411B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		92307521265B664700D411B2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		92307523265B664800D411B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		92307521265B664700D411B2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		92307526265B664800D411B2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		92307529265B664800D411B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9230752B265B664800D411B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		92307539265B997D00D411B2 /* FeedPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPreviewController.swift; sourceTree = "<group>"; };
+		9230753B265B9A9D00D411B2 /* PinterestLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinterestLayout.swift; sourceTree = "<group>"; };
+		9230753D265B9B9500D411B2 /* FeedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
+		92307542265C9B7900D411B2 /* Photos.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Photos.plist; sourceTree = "<group>"; };
+		92307543265C9B7A00D411B2 /* Photos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Photos.xcassets; sourceTree = "<group>"; };
+		9230756E265DD2D700D411B2 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Photo.swift; path = "../../../Downloads/Pinterest-master/Pinterest/Models/Photo.swift"; sourceTree = "<group>"; };
+		92307570265DD2E800D411B2 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
+		92307572265E22FB00D411B2 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
+		92307574265E23E800D411B2 /* FeedTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTagViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +54,7 @@
 		92307511265B664700D411B2 = {
 			isa = PBXGroup;
 			children = (
+				92307541265C9B7100D411B2 /* Assets */,
 				9230751C265B664700D411B2 /* FeedUI */,
 				9230751B265B664700D411B2 /* Products */,
 			);
@@ -56,10 +71,16 @@
 		9230751C265B664700D411B2 /* FeedUI */ = {
 			isa = PBXGroup;
 			children = (
+				9230756E265DD2D700D411B2 /* Photo.swift */,
 				9230751D265B664700D411B2 /* AppDelegate.swift */,
 				9230751F265B664700D411B2 /* SceneDelegate.swift */,
-				92307521265B664700D411B2 /* ContentView.swift */,
-				92307523265B664800D411B2 /* Assets.xcassets */,
+				92307521265B664700D411B2 /* ViewController.swift */,
+				9230753D265B9B9500D411B2 /* FeedCell.swift */,
+				92307570265DD2E800D411B2 /* Photo.swift */,
+				9230753B265B9A9D00D411B2 /* PinterestLayout.swift */,
+				92307539265B997D00D411B2 /* FeedPreviewController.swift */,
+				92307574265E23E800D411B2 /* FeedTagViewController.swift */,
+				92307572265E22FB00D411B2 /* MasterViewController.swift */,
 				92307528265B664800D411B2 /* LaunchScreen.storyboard */,
 				9230752B265B664800D411B2 /* Info.plist */,
 				92307525265B664800D411B2 /* Preview Content */,
@@ -73,6 +94,15 @@
 				92307526265B664800D411B2 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		92307541265C9B7100D411B2 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				92307542265C9B7900D411B2 /* Photos.plist */,
+				92307543265C9B7A00D411B2 /* Photos.xcassets */,
+			);
+			path = Assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,8 +163,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9230752A265B664800D411B2 /* LaunchScreen.storyboard in Resources */,
-				92307527265B664800D411B2 /* Preview Assets.xcassets in Resources */,
-				92307524265B664800D411B2 /* Assets.xcassets in Resources */,
+				92307545265C9B7A00D411B2 /* Photos.xcassets in Resources */,
+				92307544265C9B7A00D411B2 /* Photos.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,9 +175,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92307573265E22FB00D411B2 /* MasterViewController.swift in Sources */,
+				92307571265DD2E800D411B2 /* Photo.swift in Sources */,
+				9230753E265B9B9500D411B2 /* FeedCell.swift in Sources */,
+				9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */,
+				92307575265E23E800D411B2 /* FeedTagViewController.swift in Sources */,
+				9230753A265B997D00D411B2 /* FeedPreviewController.swift in Sources */,
 				9230751E265B664700D411B2 /* AppDelegate.swift in Sources */,
 				92307520265B664700D411B2 /* SceneDelegate.swift in Sources */,
-				92307522265B664700D411B2 /* ContentView.swift in Sources */,
+				92307522265B664700D411B2 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
