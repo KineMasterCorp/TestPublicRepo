@@ -111,6 +111,8 @@
 		<string>CITY OF LOVE</string>
 		<key>Photo</key>
 		<string>1seJnZ6TRv54soqkrx6VvLYKN3F</string>
+		<key>Category</key>
+		<string>뮤직 비디오</string>
 	</dict>
 	<dict>
 		<key>Caption</key>
@@ -157,12 +159,16 @@
 		<string>내 일상 공유하기 2</string>
 		<key>Photo</key>
 		<string>1shGFD6iQye10eLU4H8AoLZEawk</string>
+		<key>Category</key>
+		<string>브이로그</string>
 	</dict>
 	<dict>
 		<key>Caption</key>
 		<string>비디오 카툰</string>
 		<key>Photo</key>
 		<string>1sNalogNxRqVOYEUgdqJdI7NIpH</string>
+		<key>Category</key>
+		<string>예능</string>
 	</dict>
 	<dict>
 		<key>Caption</key>

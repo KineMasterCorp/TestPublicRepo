@@ -19,8 +19,7 @@ struct Photo {
     }
     
     init?(dictionary: [String: String]) {
-        guard let caption = dictionary["Caption"], let category = dictionary["Category"], let photo = dictionary["Photo"],
-              let image = UIImage(named: photo) else {
+        guard let caption = dictionary["Caption"], let category = dictionary["Category"], let photo = dictionary["Photo"], let image = UIImage(named: photo) else {
             return nil
         }
         self.init(caption: caption, category: category, image: image)

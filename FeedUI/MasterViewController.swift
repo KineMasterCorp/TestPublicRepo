@@ -97,7 +97,7 @@ class MasterViewController: UIViewController {
             contentsOf: [
                 tagCollectionView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
                 tagCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-                tagCollectionView.trailingAnchor.constraint(equalTo: searchButton.leadingAnchor, constant: -15),
+                tagCollectionView.trailingAnchor.constraint(equalTo: searchButton.leadingAnchor),
                 tagCollectionView.heightAnchor.constraint(equalToConstant: 52),
                 ]
         )
