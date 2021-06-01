@@ -12,8 +12,9 @@ class MasterViewController: UIViewController {
                                                  green: CGFloat(33.0/255),
                                                  blue: CGFloat(38.0/255.0),
                                                  alpha: 1)
-    
+        
     private var layoutConstraints: [NSLayoutConstraint] = .init()
+    private var currentTag: String = "전체"
         
     private lazy var tagLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -55,75 +56,122 @@ class MasterViewController: UIViewController {
     private lazy var closeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .semibold, scale: .large)
-        let image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
+        button.tintColor = .white
         button.addTarget(target, action: #selector(closeButtonTapped), for: .touchUpInside)
         return button
     } ()
     
     @objc internal func closeButtonTapped(_ sender: Any) {
-        print("onCloseButton")
+        dismiss(animated: true, completion: nil)
     }
     
     private lazy var searchButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .semibold, scale: .large)
-        let image = UIImage(systemName: "magnifyingglass", withConfiguration: symbolConfig)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let image = UIImage(named: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
+        button.tintColor = UIColor.white
         button.addTarget(target, action: #selector(searchButtonTapped), for: .touchUpInside)
         return button
     } ()
     
-    @objc internal func searchButtonTapped(_ sender: Any) {
-        print("onSearchButton")
-    }
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.delegate = self
+        
+        searchBar.placeholder = "Search"
+        searchBar.barTintColor = MasterViewController.backgroundColor
+        searchBar.showsCancelButton = true
+        searchBar.tintColor = .white
+        
+        let magnifyingglass = UIImage(named: "magnifyingglass")
+        searchBar.setImage(magnifyingglass, for: UISearchBar.Icon.search, state: .normal)
+        
+        let xmark = UIImage(named: "xmark")
+        searchBar.setImage(xmark, for: .clear, state: .normal)
+        
+        if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
+            textfield.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            
+            textfield.attributedPlaceholder = NSAttributedString(string: textfield.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
+            
+            textfield.textColor = UIColor.white
+        }
+        return searchBar
+    } ()
     
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        return UIStatusBarStyle.lightContent
+    private lazy var hStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.tintColor = .white
+        
+        return stackView
+    }()
+    
+    @objc internal func searchButtonTapped(_ sender: Any) {
+        if let cancelButton = searchBar.value(forKey: "cancelButton") as? UIButton {
+            cancelButton.isEnabled = true
+        }
+        
+        searchBar.isHidden = false
+        searchButton.isHidden = true
+        closeButton.isHidden = true
     }
     
     func setupHeaderViews() {
-        view.addSubview(tagCollectionView)
+        let safeLayoutGuide = view.safeAreaLayoutGuide
+        
+        view.addSubview(hStackView)
+        
+        layoutConstraints.append(
+            contentsOf: [
+                hStackView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
+                hStackView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+                hStackView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+                hStackView.heightAnchor.constraint(equalToConstant: 52),
+                ]
+        )
+        
+        hStackView.addArrangedSubview(tagCollectionView)
+        hStackView.addArrangedSubview(searchBar)
+        hStackView.addArrangedSubview(searchButton)
+        hStackView.addArrangedSubview(closeButton)
         
         tagCollectionView.tagDelegate = self
         tagCollectionView.showsVerticalScrollIndicator = false
         tagCollectionView.showsHorizontalScrollIndicator = false
         
-        let safeLayoutGuide = view.safeAreaLayoutGuide
+        tagCollectionView.items.append("전체")
+        tagCollectionView.items.append(contentsOf: feedCollectionView.photos.compactMap { photo in
+            photo.category
+        }.uniqued())
+        
+        searchBar.isHidden = true
+        
+        let searchBarConstraintLeading = searchBar.leadingAnchor.constraint(equalTo: hStackView.leadingAnchor)
+        searchBarConstraintLeading.priority = UILayoutPriority(700)
+        
+        let searchBarConstraintTrailing = searchBar.trailingAnchor.constraint(equalTo: hStackView.trailingAnchor)
+        searchBarConstraintTrailing.priority = UILayoutPriority(700)
         
         layoutConstraints.append(
             contentsOf: [
-                tagCollectionView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-                tagCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-                tagCollectionView.trailingAnchor.constraint(equalTo: searchButton.leadingAnchor),
-                tagCollectionView.heightAnchor.constraint(equalToConstant: 52),
-                ]
-        )
-              
-        view.addSubview(searchButton)
-        
-        layoutConstraints.append(
-            contentsOf: [
-                searchButton.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-                searchButton.leadingAnchor.constraint(equalTo: tagCollectionView.trailingAnchor),
-                searchButton.trailingAnchor.constraint(equalTo: closeButton.leadingAnchor),
-                searchButton.widthAnchor.constraint(equalToConstant: 52),
-                searchButton.heightAnchor.constraint(equalToConstant: 52),
+                searchBarConstraintLeading,
+                searchBarConstraintTrailing
                 ]
         )
         
-        view.addSubview(closeButton)
+        layoutConstraints.append(
+            contentsOf: [searchButton.widthAnchor.constraint(equalToConstant: 52)]
+        )
         
         layoutConstraints.append(
-            contentsOf: [
-                closeButton.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-                closeButton.leadingAnchor.constraint(equalTo: searchButton.trailingAnchor),
-                closeButton.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-                closeButton.widthAnchor.constraint(equalToConstant: 52),
-                closeButton.heightAnchor.constraint(equalToConstant: 52),
-                ]
+            contentsOf: [closeButton.widthAnchor.constraint(equalToConstant: 52)]
         )
     }
     
@@ -134,7 +182,7 @@ class MasterViewController: UIViewController {
         
         layoutConstraints.append(
             contentsOf: [
-                feedCollectionView.topAnchor.constraint(equalTo: tagCollectionView.bottomAnchor),
+                feedCollectionView.topAnchor.constraint(equalTo: hStackView.bottomAnchor),
                 feedCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
                 feedCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
                 feedCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor),
@@ -166,12 +214,49 @@ extension MasterViewController: UISearchBarDelegate {
         
         feedCollectionView.reloadData()
     }
+    
+    func filterContentBy(searchText: String, category: String) {
+        feedCollectionView.filteredPhotos = feedCollectionView.photos.filter({(photo : Photo) -> Bool in
+            let doesCategoryMatch = (category == "전체") || (photo.category == category)
+            if searchBarIsEmpty() {
+                return doesCategoryMatch
+            } else {
+                return doesCategoryMatch && photo.caption.lowercased().contains(searchText.lowercased())
+            }
+        })
+        
+        feedCollectionView.reloadData()
+    }
+    
+    func searchBarIsEmpty() -> Bool {
+        return searchBar.text?.isEmpty ?? true
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterContentBy(searchText: searchText, category: currentTag)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.endEditing(true)
+        
+        searchBar.isHidden = true
+        searchButton.isHidden = false
+        closeButton.isHidden = false
+    }
 }
 
 extension MasterViewController: TagDelegate {
     func notify(tag: String) -> Void {
-        
+        currentTag = tag
         filterContentBy(category: tag)
         feedCollectionView.setContentOffset(.zero, animated: false)
+    }
+}
+
+extension Sequence where Element: Hashable {
+    func uniqued() -> [Element] {
+        var set = Set<Element>()
+        return filter { set.insert($0).inserted }
     }
 }

@@ -8,33 +8,26 @@
 import UIKit
 
 final class FeedTagView: UICollectionView {
-    private let items: [String] = [
-        "전체",
-        "레트로",
-        "심플",
-        "뮤직 비디오",
-        "인트로",
-        "비트",
-        "브이로그",
-        "예능",
-    ]    
+    var items = [String]()
         
     private var selected: IndexPath? {
         didSet {
-            if let path = oldValue {
-                let prevCell = cellForItem(at:path) as! TagCell
-                prevCell.backgroundColor = defaultColor
-                prevCell.tagLabel.textColor = .white
-                prevCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+            if let path = oldValue, path != selected {
+                if let prevCell = cellForItem(at:path) as? TagCell {
+                    prevCell.backgroundColor = defaultColor
+                    prevCell.tagLabel.textColor = .white
+                    prevCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+                }
             }
         }
         
         willSet {
             if let path = newValue {
-                let tappedCell = cellForItem(at:path) as! TagCell
-                tappedCell.backgroundColor = selectedColor
-                tappedCell.tagLabel.textColor = .black
-                tappedCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+                if let tappedCell = cellForItem(at:path) as? TagCell {
+                    tappedCell.backgroundColor = selectedColor
+                    tappedCell.tagLabel.textColor = .black
+                    tappedCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+                }
             }
         }
     }

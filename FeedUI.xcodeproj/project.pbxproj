@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9229FBD52660F4D5009BA67D /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9229FBD42660F4D5009BA67D /* InitialViewController.swift */; };
 		9230751E265B664700D411B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230751D265B664700D411B2 /* AppDelegate.swift */; };
 		92307520265B664700D411B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230751F265B664700D411B2 /* SceneDelegate.swift */; };
-		92307522265B664700D411B2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307521265B664700D411B2 /* ViewController.swift */; };
 		9230752A265B664800D411B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92307528265B664800D411B2 /* LaunchScreen.storyboard */; };
 		9230753A265B997D00D411B2 /* FeedPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307539265B997D00D411B2 /* FeedPreviewController.swift */; };
 		9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230753B265B9A9D00D411B2 /* PinterestLayout.swift */; };
@@ -22,10 +22,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9229FBD42660F4D5009BA67D /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
 		9230751A265B664700D411B2 /* FeedUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9230751D265B664700D411B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9230751F265B664700D411B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		92307521265B664700D411B2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		92307526265B664800D411B2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		92307529265B664800D411B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9230752B265B664800D411B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -74,13 +74,13 @@
 				9230756E265DD2D700D411B2 /* Photo.swift */,
 				9230751D265B664700D411B2 /* AppDelegate.swift */,
 				9230751F265B664700D411B2 /* SceneDelegate.swift */,
-				92307521265B664700D411B2 /* ViewController.swift */,
 				9230753D265B9B9500D411B2 /* FeedCell.swift */,
 				92307570265DD2E800D411B2 /* Photo.swift */,
 				9230753B265B9A9D00D411B2 /* PinterestLayout.swift */,
 				92307539265B997D00D411B2 /* FeedPreviewController.swift */,
 				92307574265E23E800D411B2 /* FeedTagViewController.swift */,
 				92307572265E22FB00D411B2 /* MasterViewController.swift */,
+				9229FBD42660F4D5009BA67D /* InitialViewController.swift */,
 				92307528265B664800D411B2 /* LaunchScreen.storyboard */,
 				9230752B265B664800D411B2 /* Info.plist */,
 				92307525265B664800D411B2 /* Preview Content */,
@@ -178,12 +178,12 @@
 				92307573265E22FB00D411B2 /* MasterViewController.swift in Sources */,
 				92307571265DD2E800D411B2 /* Photo.swift in Sources */,
 				9230753E265B9B9500D411B2 /* FeedCell.swift in Sources */,
+				9229FBD52660F4D5009BA67D /* InitialViewController.swift in Sources */,
 				9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */,
 				92307575265E23E800D411B2 /* FeedTagViewController.swift in Sources */,
 				9230753A265B997D00D411B2 /* FeedPreviewController.swift in Sources */,
 				9230751E265B664700D411B2 /* AppDelegate.swift in Sources */,
 				92307520265B664700D411B2 /* SceneDelegate.swift in Sources */,
-				92307522265B664700D411B2 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,7 +252,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -307,7 +307,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
