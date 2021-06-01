@@ -13,6 +13,8 @@ class FeedViewController: UIViewController {
     private var currentIndex = -1
     private var scrollTo = -1
     private var dataSource: VideoDataSource!
+    
+    let closeButton: UIButton = UIButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,8 +34,23 @@ class FeedViewController: UIViewController {
         collectionView?.delegate = self
         collectionView?.prefetchDataSource = self
         collectionView?.contentInsetAdjustmentBehavior = .never
-
-        view.addSubview(collectionView!)        
+        
+        view.addSubview(collectionView!)
+                
+        let image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
+        closeButton.frame = CGRect(x: view.frame.width - 100, y: 10, width: 52, height: 52)
+        closeButton.setImage(image, for: .normal)
+        closeButton.tintColor = .white
+        closeButton.backgroundColor = .black.withAlphaComponent(0.3)
+        closeButton.layer.cornerRadius = 0.5 * closeButton.bounds.size.width
+        closeButton.clipsToBounds = true
+        closeButton.addTarget(target, action: #selector(closeButtonTapped), for: .touchUpInside)
+        
+        view.addSubview(closeButton)
+    }
+    
+    @objc internal func closeButtonTapped(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
     }
     
     override func viewDidLayoutSubviews() {
@@ -53,19 +70,13 @@ extension FeedViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
-        cell.configure(with: dataSource, index: indexPath.row, delegate: self)        
+        cell.configure(with: dataSource, index: indexPath.row)
         NSLog("Cell for \(indexPath) requested.")
         if currentIndex == -1 {
             currentIndex = indexPath.row
             cell.player?.play()
         }
         return cell
-    }
-}
-
-extension FeedViewController: CellDelegate {
-    func close() {
-        dismiss(animated: true)
     }
 }
 

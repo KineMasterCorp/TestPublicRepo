@@ -219,17 +219,18 @@ extension MasterViewController: UISearchBarDelegate {
         feedCollectionView.reloadData()
     }
     
-    func filterContentBy(photo: Photo, category: String = "전체") {
-        feedCollectionView.filteredSources = VideoDataSource(videos: feedCollectionView.sources.videos.filter({(video : VideoDataInfo) -> Bool in
+    func filterSources(photo: Photo, category: String) -> VideoDataSource {
+        let videoSource = VideoDataSource(videos: feedCollectionView.sources.videos.filter({(video : VideoDataInfo) -> Bool in
             let doesCategoryMatch = (category == "전체") || (video.category == category)
             return doesCategoryMatch
         }))
         
-//        if let index = feedCollectionView.filteredSources.videos.firstIndex(of: photo) {
-//            feedCollectionView.filteredSources.videos.move(from: index, to: 0)
-//        }
+        if let index = videoSource.videos.firstIndex(where: {$0.title == photo.caption}), index != 0 {
+            videoSource.videos.move(from: index, to: 0)
+            print("title: \(videoSource.videos[0].title)")
+        }
         
-        feedCollectionView.reloadData()
+        return videoSource
     }
     
     func filterContentBy(searchText: String, category: String) {
@@ -273,10 +274,10 @@ extension MasterViewController: TagDelegate {
 
 extension MasterViewController: FeedInfoDelegate {
     func notify(photo: Photo) -> Void {
-        filterContentBy(category: currentTag)
+        let sources = filterSources(photo: photo, category: currentTag)
         
         let controller = FeedViewController()
-        controller.setDataSource(sources: feedCollectionView.filteredSources)
+        controller.setDataSource(sources: sources)
         present(controller, animated: true)
     }
 }
