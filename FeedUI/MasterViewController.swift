@@ -43,7 +43,8 @@ class MasterViewController: UIViewController {
     private lazy var feedCollectionView: FeedPreview = {
         let view = FeedPreview(frame: CGRect.zero, collectionViewLayout: feedLayout)
         view.register(FeedCell.self, forCellWithReuseIdentifier: FeedCell.reuseIdentifier)
-        view.translatesAutoresizingMaskIntoConstraints = false        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = view
         view.dataSource = view
         view.backgroundColor = MasterViewController.backgroundColor
         if let layout = view.collectionViewLayout as? PinterestLayout {
@@ -147,8 +148,9 @@ class MasterViewController: UIViewController {
         tagCollectionView.showsHorizontalScrollIndicator = false
         
         tagCollectionView.items.append("전체")
-        tagCollectionView.items.append(contentsOf: feedCollectionView.photos.compactMap { photo in
-            photo.category
+        
+        tagCollectionView.items.append(contentsOf: feedCollectionView.sources.videos.compactMap { video in
+            video.category
         }.uniqued())
         
         searchBar.isHidden = true
@@ -177,6 +179,8 @@ class MasterViewController: UIViewController {
     
     func setupFeedView() {
         view.addSubview(feedCollectionView)
+        
+        feedCollectionView.feedInfoDelegate = self
         
         let safeLayoutGuide = view.safeAreaLayoutGuide
         
@@ -207,23 +211,36 @@ class MasterViewController: UIViewController {
 
 extension MasterViewController: UISearchBarDelegate {
     func filterContentBy(category: String = "전체") {
-        feedCollectionView.filteredPhotos = feedCollectionView.photos.filter({(photo : Photo) -> Bool in
-            let doesCategoryMatch = (category == "전체") || (photo.category == category)
+        feedCollectionView.filteredSources = VideoDataSource(videos: feedCollectionView.sources.videos.filter({(video : VideoDataInfo) -> Bool in
+            let doesCategoryMatch = (category == "전체") || (video.category == category)
             return doesCategoryMatch
-        })
+        }))
+        
+        feedCollectionView.reloadData()
+    }
+    
+    func filterContentBy(photo: Photo, category: String = "전체") {
+        feedCollectionView.filteredSources = VideoDataSource(videos: feedCollectionView.sources.videos.filter({(video : VideoDataInfo) -> Bool in
+            let doesCategoryMatch = (category == "전체") || (video.category == category)
+            return doesCategoryMatch
+        }))
+        
+//        if let index = feedCollectionView.filteredSources.videos.firstIndex(of: photo) {
+//            feedCollectionView.filteredSources.videos.move(from: index, to: 0)
+//        }
         
         feedCollectionView.reloadData()
     }
     
     func filterContentBy(searchText: String, category: String) {
-        feedCollectionView.filteredPhotos = feedCollectionView.photos.filter({(photo : Photo) -> Bool in
-            let doesCategoryMatch = (category == "전체") || (photo.category == category)
+        feedCollectionView.filteredSources = VideoDataSource(videos: feedCollectionView.sources.videos.filter({(video : VideoDataInfo) -> Bool in
+            let doesCategoryMatch = (category == "전체") || (video.category == category)
             if searchBarIsEmpty() {
                 return doesCategoryMatch
             } else {
-                return doesCategoryMatch && photo.caption.lowercased().contains(searchText.lowercased())
+                return doesCategoryMatch && video.title.lowercased().contains(searchText.lowercased())
             }
-        })
+        }))
         
         feedCollectionView.reloadData()
     }
@@ -251,6 +268,34 @@ extension MasterViewController: TagDelegate {
         currentTag = tag
         filterContentBy(category: tag)
         feedCollectionView.setContentOffset(.zero, animated: false)
+    }
+}
+
+extension MasterViewController: FeedInfoDelegate {
+    func notify(photo: Photo) -> Void {
+        filterContentBy(category: currentTag)
+        
+        let controller = FeedViewController()
+        controller.setDataSource(sources: feedCollectionView.filteredSources)
+        present(controller, animated: true)
+    }
+}
+
+extension Array where Element: Equatable
+{
+    mutating func move(_ element: Element, to newIndex: Index) {
+        if let oldIndex: Int = self.firstIndex(of: element) { self.move(from: oldIndex, to: newIndex) }
+    }
+}
+
+extension Array
+{
+    mutating func move(from oldIndex: Index, to newIndex: Index) {
+        // Don't work for free and use swap when indices are next to each other - this
+        // won't rebuild array and will be super efficient.
+        if oldIndex == newIndex { return }
+        if abs(newIndex - oldIndex) == 1 { return self.swapAt(oldIndex, newIndex) }
+        self.insert(self.remove(at: oldIndex), at: newIndex)
     }
 }
 

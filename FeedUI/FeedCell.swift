@@ -56,6 +56,11 @@ class FeedCell: UICollectionViewCell {
     
     var photo: Photo? {
         didSet {
+//            if let photo = photo, let image = photo.image {
+//                imageView.image = image
+//                captionLabel.text = photo.caption
+//            }
+            
             if let photo = photo {
                 imageView.image = photo.image
                 captionLabel.text = photo.caption

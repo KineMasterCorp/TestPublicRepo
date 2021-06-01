@@ -7,22 +7,23 @@
 
 import UIKit
 
-struct Photo {  
+struct Photo: Equatable {
     var caption: String
     var category: String
-    var image: UIImage
+    var image: UIImage?
+    var id: UUID = UUID()
     
-    init(caption: String, category: String, image: UIImage) {
+    init(caption: String, category: String, image: String) {
         self.caption = caption
         self.category = category
-        self.image = image
+        self.image = UIImage(named: image)
     }
     
     init?(dictionary: [String: String]) {
-        guard let caption = dictionary["Caption"], let category = dictionary["Category"], let photo = dictionary["Photo"], let image = UIImage(named: photo) else {
+        guard let caption = dictionary["Caption"], let category = dictionary["Category"], let photo = dictionary["Photo"] else {
             return nil
         }
-        self.init(caption: caption, category: category, image: image)
+        self.init(caption: caption, category: category, image: photo)
     }
     
     static func allPhotos() -> [Photo] {
