@@ -37,7 +37,14 @@ class FeedViewController: UIViewController {
         
         view.addSubview(collectionView!)
                 
-        let image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
+        var image: UIImage?
+        
+        if #available(iOS 13, *) {
+            image = UIImage(systemName: "xmark")
+        } else {
+            image = UIImage(named: "xmark")
+        }
+        
         closeButton.frame = CGRect(x: view.frame.width - 100, y: 10, width: 52, height: 52)
         closeButton.setImage(image, for: .normal)
         closeButton.tintColor = .white

@@ -62,7 +62,7 @@ class MasterViewController: UIViewController {
         if #available(iOS 13, *) {
             image = UIImage(systemName: "xmark")
         } else {
-            image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
+            image = UIImage(named: "xmark")
         }
         
         button.setImage(image, for: .normal)
@@ -84,7 +84,7 @@ class MasterViewController: UIViewController {
         if #available(iOS 13, *) {
             image = UIImage(systemName: "magnifyingglass")
         } else {
-            image = UIImage(named: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
+            image = UIImage(named: "magnifyingglass")
         }
         
         button.setImage(image, for: .normal)
@@ -110,7 +110,7 @@ class MasterViewController: UIViewController {
             magnifyingglass = UIImage(systemName: "magnifyingglass")?.withTintColor(.white)
             xmark = UIImage(systemName: "xmark")
         } else {
-            magnifyingglass = UIImage(named: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
+            magnifyingglass = UIImage(named: "magnifyingglass")
             xmark = UIImage(named: "xmark")
         }
                 
