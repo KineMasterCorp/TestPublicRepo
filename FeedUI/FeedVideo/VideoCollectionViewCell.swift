@@ -70,6 +70,8 @@ class VideoCollectionViewCell: UICollectionViewCell {
             player = AVPlayer(playerItem: playerItem)
         }
         
+        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player!.currentItem)
+        
         playerLayer = AVPlayerLayer(player: player)
         playerLayer!.frame = contentView.bounds
         playerLayer!.videoGravity = .resizeAspectFill
@@ -82,16 +84,16 @@ class VideoCollectionViewCell: UICollectionViewCell {
         
         NSLog("prepareForReuse: \(index)")
         
-        playerLayer?.removeFromSuperlayer()
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         
-//        if let layers = contentView.layer.sublayers {
-//            for layer in layers {
-//                if layer == playerLayer {
-//                    NSLog("remove layer")
-//                    layer.removeFromSuperlayer()
-//                }
-//            }
-//        }
+        playerLayer?.player = nil   // Workaround code for old devices like iPhone 5s.
+                                    // If we scroll the screen very fast, only black screen is shown on the device with playing only audio.
+        playerLayer?.removeFromSuperlayer()
+    }
+    
+    @objc private func playerDidFinishPlaying() {
+        player?.seek(to: CMTime.zero)
+        player?.play()
     }
 }
 
