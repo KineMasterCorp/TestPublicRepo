@@ -22,7 +22,6 @@ class InitialViewController: UIViewController {
     private lazy var feedButton: ActualGradientButton = {
         let button = ActualGradientButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        //let image = UIImage(named: "icFeed")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         let image = UIImage(named: "icFeed")
         button.setImage(image, for: .normal)
         button.addTarget(target, action: #selector(feedButtonTapped), for: .touchUpInside)
@@ -39,7 +38,6 @@ class InitialViewController: UIViewController {
         NSLayoutConstraint.activate([
             feedButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             feedButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            feedButton.widthAnchor.constraint(equalToConstant: view.bounds.width / 4),
             feedButton.heightAnchor.constraint(equalToConstant: 80)
         ])
         
@@ -138,7 +136,8 @@ class ActualGradientButton: UIButton {
     override func layoutSubviews() {
         super.layoutSubviews()
         gradientLayer.frame = bounds
-        setInsets(forContentPadding: .zero, imageTitlePadding: 10)
+        self.titleLabel?.font = UIFont.systemFont(ofSize: 17)        
+        setInsets(forContentPadding: .init(top: 0, left: 25, bottom: 0, right: 25), imageTitlePadding: 10)
     }
     
     private lazy var gradientLayer: CAGradientLayer = {

@@ -57,7 +57,14 @@ class MasterViewController: UIViewController {
     private lazy var closeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
+        var image: UIImage?
+        
+        if #available(iOS 13, *) {
+            image = UIImage(systemName: "xmark")
+        } else {
+            image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
+        }
+        
         button.setImage(image, for: .normal)
         button.tintColor = .white
         button.addTarget(target, action: #selector(closeButtonTapped), for: .touchUpInside)
@@ -71,7 +78,15 @@ class MasterViewController: UIViewController {
     private lazy var searchButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let image = UIImage(named: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
+        
+        var image: UIImage?
+        
+        if #available(iOS 13, *) {
+            image = UIImage(systemName: "magnifyingglass")
+        } else {
+            image = UIImage(named: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
+        }
+        
         button.setImage(image, for: .normal)
         button.tintColor = UIColor.white
         button.addTarget(target, action: #selector(searchButtonTapped), for: .touchUpInside)
@@ -88,11 +103,19 @@ class MasterViewController: UIViewController {
         searchBar.showsCancelButton = true
         searchBar.tintColor = .white
         
-        let magnifyingglass = UIImage(named: "magnifyingglass")
-        searchBar.setImage(magnifyingglass, for: UISearchBar.Icon.search, state: .normal)
+        var magnifyingglass: UIImage?
+        var xmark: UIImage?
         
-        let xmark = UIImage(named: "xmark")
-        searchBar.setImage(xmark, for: .clear, state: .normal)
+        if #available(iOS 13, *) {
+            magnifyingglass = UIImage(systemName: "magnifyingglass")?.withTintColor(.white)
+            xmark = UIImage(systemName: "xmark")
+        } else {
+            magnifyingglass = UIImage(named: "magnifyingglass")?.withRenderingMode(.alwaysTemplate)
+            xmark = UIImage(named: "xmark")
+        }
+                
+        searchBar.setImage(magnifyingglass, for: UISearchBar.Icon.search, state: .normal)
+        searchBar.setImage(xmark, for: .clear, state: .normal)        
         
         if let textfield = searchBar.value(forKey: "searchField") as? UITextField {
             textfield.backgroundColor = UIColor.white.withAlphaComponent(0.1)
@@ -123,6 +146,8 @@ class MasterViewController: UIViewController {
         searchButton.isHidden = true
         closeButton.isHidden = true
     }
+    
+    private var viewDidAppearOnce: Bool = false
     
     func setupHeaderViews() {
         let safeLayoutGuide = view.safeAreaLayoutGuide
@@ -205,7 +230,10 @@ class MasterViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        tagCollectionView.collectionView(tagCollectionView, didSelectItemAt: IndexPath(row: 0, section: 0))
+        if !viewDidAppearOnce { // workaround
+            tagCollectionView.collectionView(tagCollectionView, didSelectItemAt: IndexPath(row: 0, section: 0))
+            viewDidAppearOnce = true
+        }
     }
 }
 
@@ -220,10 +248,7 @@ extension MasterViewController: UISearchBarDelegate {
     }
     
     func filterSources(photo: Photo, category: String) -> VideoDataSource {
-        let videoSource = VideoDataSource(videos: feedCollectionView.sources.videos.filter({(video : VideoDataInfo) -> Bool in
-            let doesCategoryMatch = (category == "전체") || (video.category == category)
-            return doesCategoryMatch
-        }))
+        let videoSource = feedCollectionView.filteredSources
         
         if let index = videoSource.videos.firstIndex(where: {$0.title == photo.caption}), index != 0 {
             videoSource.videos.move(from: index, to: 0)
@@ -244,6 +269,7 @@ extension MasterViewController: UISearchBarDelegate {
         }))
         
         feedCollectionView.reloadData()
+        print("searchText: \(searchText)")
     }
     
     func searchBarIsEmpty() -> Bool {

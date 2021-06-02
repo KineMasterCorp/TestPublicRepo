@@ -148,7 +148,7 @@ class VideoDataSource {
                           category: "예능"),
             
             VideoDataInfo(title: "동물 스케치", tags: ["인스타그램", "릴스", "여행", "시간"], videoURL: URL(string:"https://cdn-project-feed.kinemasters.com/projects/60a1f83e33308402c8b63ff4/1seKOTFeUBZNxd8sEflEnVFVata.mp4")!,
-                          poster: "1rmz3vIDf9maPExwHGRGEKdoRbk",
+                          poster: "1seKOQ6cvFextlHFBxDW5n1nh4Z",
                           category: "레트로"),
             
             VideoDataInfo(title: "나만의 컬러 : 겨울", tags: ["인스타그램", "릴스", "여행", "시간"], videoURL: URL(string:"https://cdn-project-feed.kinemasters.com/projects/604e975001071402c972bb61/1rp0cILOCz1OIHLs4OCgavi7imN.mp4")!,

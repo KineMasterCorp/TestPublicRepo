@@ -18,24 +18,6 @@ class VideoCollectionViewCell: UICollectionViewCell {
     var player: AVPlayer?
     var index: Int = -1
     private var playerLayer: AVPlayerLayer?
-    
-    //private var delegate: CellDelegate?
-    
-//    private lazy var closeButton: UIButton = {
-//        let button = UIButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        let image = UIImage(named: "xmark")?.withRenderingMode(.alwaysTemplate)
-//        button.setImage(image, for: .normal)
-//        button.tintColor = .white
-//        button.addTarget(target, action: #selector(closeButtonTapped), for: .touchUpInside)
-//        return button
-//    } ()
-    
-//    private var closeButton = UIButton()
-//
-//    @objc func closeButtonTapped(_ sender: Any) {
-//        delegate?.close()
-//    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
