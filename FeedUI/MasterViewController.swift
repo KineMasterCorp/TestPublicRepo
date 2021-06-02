@@ -278,6 +278,7 @@ extension MasterViewController: FeedInfoDelegate {
         
         let controller = FeedViewController()
         controller.setDataSource(sources: sources)
+        controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
     }
 }
