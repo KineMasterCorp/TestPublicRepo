@@ -248,7 +248,7 @@ extension MasterViewController: UISearchBarDelegate {
     }
     
     func filterSources(photo: Photo, category: String) -> VideoDataSource {
-        let videoSource = feedCollectionView.filteredSources
+        let videoSource = VideoDataSource(videos: feedCollectionView.filteredSources.videos)
         
         if let index = videoSource.videos.firstIndex(where: {$0.title == photo.caption}), index != 0 {
             videoSource.videos.move(from: index, to: 0)
