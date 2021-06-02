@@ -61,6 +61,21 @@ class FeedViewController: UIViewController {
     func setDataSource(sources: VideoDataSource) {
         self.dataSource = sources
     }
+    
+    private func checkStartPlay(collectionView: UICollectionView, newIndex: Int) {
+        if newIndex >= 0 && currentIndex != newIndex {
+            for cell in collectionView.visibleCells {
+                if let cell = cell as? VideoCollectionViewCell {
+                    NSLog("checkStartPlay: Visible cells: \(cell.index), currentIndex: \(currentIndex), newIndex: \(newIndex)")
+                    if cell.index == newIndex {
+                        NSLog("checkStartPlay: Start playing: \(newIndex)")
+                        currentIndex = newIndex // Update currentIndex only when the current cell is included in the visibleCells.
+                        cell.player?.play()
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension FeedViewController: UICollectionViewDataSource {
@@ -74,6 +89,7 @@ extension FeedViewController: UICollectionViewDataSource {
         NSLog("Cell for \(indexPath) requested.")
         if currentIndex == -1 {
             currentIndex = indexPath.row
+            NSLog("cellForItemAt: Start playing: \(currentIndex)")
             cell.player?.play()
         }
         return cell
@@ -82,49 +98,27 @@ extension FeedViewController: UICollectionViewDataSource {
 
 extension FeedViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        NSLog("willDisplay \(indexPath)")
-    }    
+        let newIndex = indexPath.row
+        NSLog("willDisplay \(indexPath.row), CurrentIndex: \(currentIndex), newIndex: \(newIndex)")
+        
+        checkStartPlay(collectionView: collectionView, newIndex: newIndex)
+    }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        NSLog("didEndDisplaying \(indexPath), CurrentIndex: \(scrollTo)")
+        NSLog("didEndDisplaying \(indexPath.row), CurrentIndex: \(currentIndex), newIndex: \(scrollTo)")
         if let cell = cell as? VideoCollectionViewCell {
             cell.player?.pause()
             cell.player?.seek(to: .zero)
         }
-        
-        if scrollTo >= 0 && currentIndex != scrollTo {
-            currentIndex = scrollTo
-            
-            for cell in collectionView.visibleCells {
-                if let cell = cell as? VideoCollectionViewCell {
-                    NSLog("didEndDisplaying: Visible cells: \(cell.index)")
-                    if cell.index == currentIndex {
-                        NSLog("didEndDisplaying: Start playing: \(currentIndex)")
-                        cell.player?.play()
-                    }
-                }
-            }
-        }
+
+        checkStartPlay(collectionView: collectionView, newIndex: scrollTo)
     }
     
     // JT: scrollViewWillEndDragging is not called when scrolling very fast.
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let index = Int(round(targetContentOffset.pointee.x / UIScreen.main.bounds.size.width))
-        NSLog("scrollViewWillEndDragging index: \(currentIndex) -> \(index)")
-        if currentIndex != index {
-            if let visibleCells = collectionView?.visibleCells {
-                for cell in visibleCells {
-                    if let cell = cell as? VideoCollectionViewCell {
-                        NSLog("scrollViewWillEndDragging Visible cells: \(cell.index)")
-                        if cell.index == index {
-                            NSLog("scrollViewWillEndDragging: Start playing: \(index)")
-                            cell.player?.play()
-                            currentIndex = index
-                        }
-                    }
-                }
-            }
-        }
+        let newIndex = Int(round(targetContentOffset.pointee.x / UIScreen.main.bounds.size.width))
+        NSLog("scrollViewWillEndDragging CurrentIndex: \(currentIndex), newIndex: \(newIndex)")
+        checkStartPlay(collectionView: collectionView!, newIndex: newIndex)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

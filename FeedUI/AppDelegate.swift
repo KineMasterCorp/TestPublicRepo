@@ -6,13 +6,29 @@
 //
 
 import UIKit
+import AVFoundation
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    var initialViewController :UIViewController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        initialViewController  = InitialViewController()
+        
+        let frame = UIScreen.main.bounds
+        window = UIWindow(frame: frame)
+        
+        window!.rootViewController = initialViewController
+        window!.makeKeyAndVisible()
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback)
+        } catch(let error) {
+            print(error.localizedDescription)
+        }
+
         return true
     }
 
