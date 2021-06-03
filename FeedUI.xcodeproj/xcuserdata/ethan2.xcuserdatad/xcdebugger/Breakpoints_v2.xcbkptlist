@@ -870,8 +870,8 @@
             filePath = "FeedUI/FeedVideo/VideoCollectionViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "40"
-            endingLineNumber = "40"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
             landmarkName = "configureVideo(dataSource:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -969,6 +969,22 @@
             startingLineNumber = "303"
             endingLineNumber = "303"
             landmarkName = "notify(photo:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "78E0B1CE-CB36-45BB-B3F8-788628309CDB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FeedUI/FeedVideo/VideoCollectionViewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "playerDidFinishPlaying()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

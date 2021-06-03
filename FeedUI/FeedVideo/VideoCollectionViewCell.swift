@@ -29,6 +29,11 @@ class VideoCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    deinit {
+        player = nil
+        AVPlayer.instanceCount -= 1
+    }
 
     public func configure(with dataSource: VideoDataSource, index: Int) {
         NSLog("configure cell with \(index)")
@@ -68,6 +73,8 @@ class VideoCollectionViewCell: UICollectionViewCell {
         
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         
+        player = nil
+        AVPlayer.instanceCount -= 1
         playerLayer?.player = nil   // Workaround code for old devices like iPhone 5s.
                                     // If we scroll the screen very fast, only black screen is shown on the device with playing only audio.
         playerLayer?.removeFromSuperlayer()
