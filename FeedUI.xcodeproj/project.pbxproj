@@ -7,43 +7,64 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9229FBD52660F4D5009BA67D /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9229FBD42660F4D5009BA67D /* InitialViewController.swift */; };
+		9229FBD52660F4D5009BA67D /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9229FBD42660F4D5009BA67D /* HomeViewController.swift */; };
 		9230751E265B664700D411B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230751D265B664700D411B2 /* AppDelegate.swift */; };
-		92307520265B664700D411B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230751F265B664700D411B2 /* SceneDelegate.swift */; };
 		9230752A265B664800D411B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92307528265B664800D411B2 /* LaunchScreen.storyboard */; };
-		9230753A265B997D00D411B2 /* FeedPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307539265B997D00D411B2 /* FeedPreviewController.swift */; };
+		9230753A265B997D00D411B2 /* FeedUIImageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307539265B997D00D411B2 /* FeedUIImageCollectionView.swift */; };
 		9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230753B265B9A9D00D411B2 /* PinterestLayout.swift */; };
-		9230753E265B9B9500D411B2 /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230753D265B9B9500D411B2 /* FeedCell.swift */; };
-		92307544265C9B7A00D411B2 /* Photos.plist in Resources */ = {isa = PBXBuildFile; fileRef = 92307542265C9B7900D411B2 /* Photos.plist */; };
-		92307545265C9B7A00D411B2 /* Photos.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92307543265C9B7A00D411B2 /* Photos.xcassets */; };
-		92307571265DD2E800D411B2 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307570265DD2E800D411B2 /* Photo.swift */; };
-		92307573265E22FB00D411B2 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307572265E22FB00D411B2 /* MasterViewController.swift */; };
-		92307575265E23E800D411B2 /* FeedTagViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307574265E23E800D411B2 /* FeedTagViewController.swift */; };
-		92AC76E22665D43000239211 /* VideoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76DE2665D43000239211 /* VideoDataSource.swift */; };
+		9230753E265B9B9500D411B2 /* FeedUIImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9230753D265B9B9500D411B2 /* FeedUIImageCell.swift */; };
+		92307545265C9B7A00D411B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92307543265C9B7A00D411B2 /* Assets.xcassets */; };
+		92307573265E22FB00D411B2 /* FeedUIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307572265E22FB00D411B2 /* FeedUIController.swift */; };
+		92307575265E23E800D411B2 /* FeedUIHeaderStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92307574265E23E800D411B2 /* FeedUIHeaderStackView.swift */; };
+		929F6D43266DE2E20008CA69 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 929F6D42266DE2E20008CA69 /* ImageCache.swift */; };
+		929F6E3C266DE3C40008CA69 /* ImageURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 929F6E3B266DE3C40008CA69 /* ImageURLProtocol.swift */; };
+		929F6E3E266DF3860008CA69 /* FeedUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 929F6E3D266DF3860008CA69 /* FeedUIImage.swift */; };
+		92A7032F267499BC00C526F9 /* UIScrollView+BottomRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 92A7032D267499BB00C526F9 /* UIScrollView+BottomRefreshControl.m */; };
+		92A703312675C2B700C526F9 /* UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A703302675C2B700C526F9 /* UIExtensions.swift */; };
+		92A7033426783B9100C526F9 /* ImageQueueProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033326783B9100C526F9 /* ImageQueueProvider.swift */; };
+		92A7033626783BB600C526F9 /* SequentialBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033526783BB600C526F9 /* SequentialBackgroundView.swift */; };
+		92A7033926783C4000C526F9 /* ActualGradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033826783C4000C526F9 /* ActualGradientButton.swift */; };
+		92A7033B2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033A2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift */; };
+		92A7033F2679085100C526F9 /* FeedUIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033E2679085000C526F9 /* FeedUIViewModel.swift */; };
+		92A703412679C66A00C526F9 /* FeedUITagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A703402679C66A00C526F9 /* FeedUITagCollectionView.swift */; };
+		92AC76E22665D43000239211 /* FeedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76DE2665D43000239211 /* FeedDataSource.swift */; };
 		92AC76E32665D43000239211 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76DF2665D43000239211 /* FeedViewController.swift */; };
 		92AC76E42665D43000239211 /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */; };
+		92AE5711266F4F5500DD163B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AE5710266F4F5500DD163B /* Extensions.swift */; };
+		92AE57162670B4CB00DD163B /* FeedUITagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AE57152670B4CB00DD163B /* FeedUITagCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9229FBD42660F4D5009BA67D /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
+		9229FBD42660F4D5009BA67D /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		9230751A265B664700D411B2 /* FeedUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeedUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9230751D265B664700D411B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9230751F265B664700D411B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		92307526265B664800D411B2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		92307529265B664800D411B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9230752B265B664800D411B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		92307539265B997D00D411B2 /* FeedPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPreviewController.swift; sourceTree = "<group>"; };
+		92307539265B997D00D411B2 /* FeedUIImageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIImageCollectionView.swift; sourceTree = "<group>"; };
 		9230753B265B9A9D00D411B2 /* PinterestLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinterestLayout.swift; sourceTree = "<group>"; };
-		9230753D265B9B9500D411B2 /* FeedCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
-		92307542265C9B7900D411B2 /* Photos.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Photos.plist; sourceTree = "<group>"; };
-		92307543265C9B7A00D411B2 /* Photos.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Photos.xcassets; sourceTree = "<group>"; };
-		9230756E265DD2D700D411B2 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Photo.swift; path = "../../../Downloads/Pinterest-master/Pinterest/Models/Photo.swift"; sourceTree = "<group>"; };
-		92307570265DD2E800D411B2 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
-		92307572265E22FB00D411B2 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
-		92307574265E23E800D411B2 /* FeedTagViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTagViewController.swift; sourceTree = "<group>"; };
-		92AC76DE2665D43000239211 /* VideoDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDataSource.swift; sourceTree = "<group>"; };
+		9230753D265B9B9500D411B2 /* FeedUIImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedUIImageCell.swift; sourceTree = "<group>"; };
+		92307543265C9B7A00D411B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		92307572265E22FB00D411B2 /* FeedUIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIController.swift; sourceTree = "<group>"; };
+		92307574265E23E800D411B2 /* FeedUIHeaderStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIHeaderStackView.swift; sourceTree = "<group>"; };
+		929F6D42266DE2E20008CA69 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		929F6E3B266DE3C40008CA69 /* ImageURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageURLProtocol.swift; sourceTree = "<group>"; };
+		929F6E3D266DF3860008CA69 /* FeedUIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedUIImage.swift; sourceTree = "<group>"; };
+		92A7032C267499BB00C526F9 /* FeedUI-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FeedUI-Bridging-Header.h"; sourceTree = "<group>"; };
+		92A7032D267499BB00C526F9 /* UIScrollView+BottomRefreshControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+BottomRefreshControl.m"; sourceTree = "<group>"; };
+		92A7032E267499BC00C526F9 /* UIScrollView+BottomRefreshControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+BottomRefreshControl.h"; sourceTree = "<group>"; };
+		92A703302675C2B700C526F9 /* UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIExtensions.swift; sourceTree = "<group>"; };
+		92A7033326783B9100C526F9 /* ImageQueueProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageQueueProvider.swift; sourceTree = "<group>"; };
+		92A7033526783BB600C526F9 /* SequentialBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequentialBackgroundView.swift; sourceTree = "<group>"; };
+		92A7033826783C4000C526F9 /* ActualGradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActualGradientButton.swift; sourceTree = "<group>"; };
+		92A7033A2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeInteractor+Navigator+Presenter.swift"; sourceTree = "<group>"; };
+		92A7033E2679085000C526F9 /* FeedUIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIViewModel.swift; sourceTree = "<group>"; };
+		92A703402679C66A00C526F9 /* FeedUITagCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUITagCollectionView.swift; sourceTree = "<group>"; };
+		92AC76DE2665D43000239211 /* FeedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedDataSource.swift; sourceTree = "<group>"; };
 		92AC76DF2665D43000239211 /* FeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCollectionViewCell.swift; sourceTree = "<group>"; };
+		92AE5710266F4F5500DD163B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		92AE57152670B4CB00DD163B /* FeedUITagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUITagCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,17 +98,13 @@
 		9230751C265B664700D411B2 /* FeedUI */ = {
 			isa = PBXGroup;
 			children = (
+				92A7033726783C1E00C526F9 /* Components */,
+				92A7033226783B7D00C526F9 /* Home */,
 				92AC76DC2665D41600239211 /* FeedVideo */,
-				9230756E265DD2D700D411B2 /* Photo.swift */,
+				92AE57122670B34800DD163B /* FeedUI */,
+				92AE57142670B3D900DD163B /* Sources */,
+				92AE57132670B36300DD163B /* Utils */,
 				9230751D265B664700D411B2 /* AppDelegate.swift */,
-				9230751F265B664700D411B2 /* SceneDelegate.swift */,
-				9230753D265B9B9500D411B2 /* FeedCell.swift */,
-				92307570265DD2E800D411B2 /* Photo.swift */,
-				9230753B265B9A9D00D411B2 /* PinterestLayout.swift */,
-				92307539265B997D00D411B2 /* FeedPreviewController.swift */,
-				92307574265E23E800D411B2 /* FeedTagViewController.swift */,
-				92307572265E22FB00D411B2 /* MasterViewController.swift */,
-				9229FBD42660F4D5009BA67D /* InitialViewController.swift */,
 				92307528265B664800D411B2 /* LaunchScreen.storyboard */,
 				9230752B265B664800D411B2 /* Info.plist */,
 				92307525265B664800D411B2 /* Preview Content */,
@@ -106,20 +123,75 @@
 		92307541265C9B7100D411B2 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				92307542265C9B7900D411B2 /* Photos.plist */,
-				92307543265C9B7A00D411B2 /* Photos.xcassets */,
+				92307543265C9B7A00D411B2 /* Assets.xcassets */,
 			);
 			path = Assets;
+			sourceTree = "<group>";
+		};
+		92A7033226783B7D00C526F9 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				92A7033A2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift */,
+				9229FBD42660F4D5009BA67D /* HomeViewController.swift */,
+				92A7033326783B9100C526F9 /* ImageQueueProvider.swift */,
+				92A7033526783BB600C526F9 /* SequentialBackgroundView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		92A7033726783C1E00C526F9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				92A7033826783C4000C526F9 /* ActualGradientButton.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		92AC76DC2665D41600239211 /* FeedVideo */ = {
 			isa = PBXGroup;
 			children = (
-				92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */,
-				92AC76DE2665D43000239211 /* VideoDataSource.swift */,
 				92AC76DF2665D43000239211 /* FeedViewController.swift */,
+				92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */,
 			);
 			path = FeedVideo;
+			sourceTree = "<group>";
+		};
+		92AE57122670B34800DD163B /* FeedUI */ = {
+			isa = PBXGroup;
+			children = (
+				9230753D265B9B9500D411B2 /* FeedUIImageCell.swift */,
+				92307539265B997D00D411B2 /* FeedUIImageCollectionView.swift */,
+				92AE57152670B4CB00DD163B /* FeedUITagCell.swift */,
+				92307574265E23E800D411B2 /* FeedUIHeaderStackView.swift */,
+				92307572265E22FB00D411B2 /* FeedUIController.swift */,
+				92A703402679C66A00C526F9 /* FeedUITagCollectionView.swift */,
+				92A7033E2679085000C526F9 /* FeedUIViewModel.swift */,
+				9230753B265B9A9D00D411B2 /* PinterestLayout.swift */,
+			);
+			path = FeedUI;
+			sourceTree = "<group>";
+		};
+		92AE57132670B36300DD163B /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				92AE5710266F4F5500DD163B /* Extensions.swift */,
+				92A7032C267499BB00C526F9 /* FeedUI-Bridging-Header.h */,
+				929F6D42266DE2E20008CA69 /* ImageCache.swift */,
+				929F6E3B266DE3C40008CA69 /* ImageURLProtocol.swift */,
+				92A703302675C2B700C526F9 /* UIExtensions.swift */,
+				92A7032E267499BC00C526F9 /* UIScrollView+BottomRefreshControl.h */,
+				92A7032D267499BB00C526F9 /* UIScrollView+BottomRefreshControl.m */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		92AE57142670B3D900DD163B /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				92AC76DE2665D43000239211 /* FeedDataSource.swift */,
+				929F6E3D266DF3860008CA69 /* FeedUIImage.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +225,7 @@
 				TargetAttributes = {
 					92307519265B664700D411B2 = {
 						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1250;
 					};
 				};
 			};
@@ -180,8 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9230752A265B664800D411B2 /* LaunchScreen.storyboard in Resources */,
-				92307545265C9B7A00D411B2 /* Photos.xcassets in Resources */,
-				92307544265C9B7A00D411B2 /* Photos.plist in Resources */,
+				92307545265C9B7A00D411B2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,18 +264,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92AC76E22665D43000239211 /* VideoDataSource.swift in Sources */,
-				92307573265E22FB00D411B2 /* MasterViewController.swift in Sources */,
+				92AC76E22665D43000239211 /* FeedDataSource.swift in Sources */,
+				929F6D43266DE2E20008CA69 /* ImageCache.swift in Sources */,
+				92307573265E22FB00D411B2 /* FeedUIController.swift in Sources */,
+				92A703312675C2B700C526F9 /* UIExtensions.swift in Sources */,
 				92AC76E42665D43000239211 /* VideoCollectionViewCell.swift in Sources */,
-				92307571265DD2E800D411B2 /* Photo.swift in Sources */,
-				9230753E265B9B9500D411B2 /* FeedCell.swift in Sources */,
-				9229FBD52660F4D5009BA67D /* InitialViewController.swift in Sources */,
+				9230753E265B9B9500D411B2 /* FeedUIImageCell.swift in Sources */,
+				9229FBD52660F4D5009BA67D /* HomeViewController.swift in Sources */,
+				92A703412679C66A00C526F9 /* FeedUITagCollectionView.swift in Sources */,
+				929F6E3C266DE3C40008CA69 /* ImageURLProtocol.swift in Sources */,
+				92A7033F2679085100C526F9 /* FeedUIViewModel.swift in Sources */,
+				92A7033626783BB600C526F9 /* SequentialBackgroundView.swift in Sources */,
 				92AC76E32665D43000239211 /* FeedViewController.swift in Sources */,
 				9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */,
-				92307575265E23E800D411B2 /* FeedTagViewController.swift in Sources */,
-				9230753A265B997D00D411B2 /* FeedPreviewController.swift in Sources */,
+				92A7033426783B9100C526F9 /* ImageQueueProvider.swift in Sources */,
+				929F6E3E266DF3860008CA69 /* FeedUIImage.swift in Sources */,
+				92AE5711266F4F5500DD163B /* Extensions.swift in Sources */,
+				92A7033B2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift in Sources */,
+				92AE57162670B4CB00DD163B /* FeedUITagCell.swift in Sources */,
+				92307575265E23E800D411B2 /* FeedUIHeaderStackView.swift in Sources */,
+				9230753A265B997D00D411B2 /* FeedUIImageCollectionView.swift in Sources */,
+				92A7033926783C4000C526F9 /* ActualGradientButton.swift in Sources */,
 				9230751E265B664700D411B2 /* AppDelegate.swift in Sources */,
-				92307520265B664700D411B2 /* SceneDelegate.swift in Sources */,
+				92A7032F267499BC00C526F9 /* UIScrollView+BottomRefreshControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +425,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"FeedUI/Preview Content\"";
 				DEVELOPMENT_TEAM = CRN9BKF7KH;
@@ -351,8 +435,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = test.ethan.FeedUI;
+				PRODUCT_BUNDLE_IDENTIFIER = test.ethan.FeedUI2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FeedUI/Utils/FeedUI-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -363,6 +449,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"FeedUI/Preview Content\"";
 				DEVELOPMENT_TEAM = CRN9BKF7KH;
@@ -372,8 +459,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = test.ethan.FeedUI;
+				PRODUCT_BUNDLE_IDENTIFIER = test.ethan.FeedUI2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FeedUI/Utils/FeedUI-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

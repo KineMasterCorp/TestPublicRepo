@@ -1,5 +1,5 @@
 //
-//  FeedCell.swift
+//  FeedUIImageCell.swift
 //  FeedUI
 //
 //  Created by ETHAN2 on 2021/05/24.
@@ -7,9 +7,9 @@
 
 import UIKit
 
-class FeedCell: UICollectionViewCell {
-    public static let reuseIdentifier = "FeedCell"
-    fileprivate var imageView: UIImageView = {
+class FeedUIImageCell: UICollectionViewCell {
+    public static let reuseIdentifier = "FeedUIImageCell"
+    var imageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.layer.cornerRadius = 6
@@ -18,7 +18,7 @@ class FeedCell: UICollectionViewCell {
         return image
     } ()
     
-    fileprivate var captionLabel: UILabel = {
+    var captionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
@@ -54,17 +54,11 @@ class FeedCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var photo: Photo? {
+    var item: FeedUIImage? {
         didSet {
-//            if let photo = photo, let image = photo.image {
-//                imageView.image = image
-//                captionLabel.text = photo.caption
-//            }
-            
-            if let photo = photo {
-                imageView.image = photo.image
-                captionLabel.text = photo.caption
+            if let item = item {
+                imageView.image = item.image
             }
         }
-    }
+    }    
 }

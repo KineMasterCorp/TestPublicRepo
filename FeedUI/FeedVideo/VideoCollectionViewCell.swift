@@ -35,13 +35,13 @@ class VideoCollectionViewCell: UICollectionViewCell {
         AVPlayer.instanceCount -= 1
     }
 
-    public func configure(with dataSource: VideoDataSource, index: Int) {
+    public func configure(with dataSource: FeedDataSource, index: Int) {
         NSLog("configure cell with \(index)")
         self.index = index
         configureVideo(dataSource: dataSource)
     }
     
-    private func configureVideo(dataSource: VideoDataSource) {
+    private func configureVideo(dataSource: FeedDataSource) {
         guard let asset = dataSource.getVideo(of: index) else {
             NSLog("configureVideo: couldn't get video asset for \(index)")
             return

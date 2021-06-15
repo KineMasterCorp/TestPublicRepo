@@ -12,7 +12,7 @@ class FeedViewController: UIViewController {
     private var collectionView: UICollectionView?
     private var currentIndex = -1
     private var scrollTo = -1
-    private var dataSource: VideoDataSource!
+    private var dataSource: FeedDataSource!
     
     let closeButton: UIButton = UIButton()
 
@@ -63,10 +63,14 @@ class FeedViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView?.frame = view.bounds
+        
+        let indexPath = NSIndexPath(item: currentIndex, section: 0)
+        collectionView?.scrollToItem(at: indexPath as IndexPath, at: .centeredHorizontally, animated: false)
     }
     
-    func setDataSource(sources: VideoDataSource) {
+    func setDataSource(sources: FeedDataSource, startIndex: Array<FeedDataInfo>.Index) {
         self.dataSource = sources
+        self.currentIndex = startIndex
     }
     
     private func checkStartPlay(collectionView: UICollectionView, newIndex: Int) {
@@ -94,8 +98,7 @@ extension FeedViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
         cell.configure(with: dataSource, index: indexPath.row)
         NSLog("Cell for \(indexPath) requested.")
-        if currentIndex == -1 {
-            currentIndex = indexPath.row
+        if currentIndex == indexPath.row {
             NSLog("cellForItemAt: Start playing: \(currentIndex)")
             cell.player?.play()
         }
