@@ -38,7 +38,7 @@ class FeedUIImageCell: UICollectionViewCell {
             contentsOf: [imageView.topAnchor.constraint(equalTo: topAnchor),
                          imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
                          imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                         imageView.bottomAnchor.constraint(equalTo: captionLabel.topAnchor, constant: -6)])
+                         imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)])
         
         addSubview(captionLabel)
         layoutConstraints.append(

@@ -9,7 +9,6 @@ import UIKit
 
 class FeedUITagCollectionView: UIView {
     private var items: [String]
-    private var currentIndex: Int = 0
     
     private lazy var tagLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -62,7 +61,6 @@ class FeedUITagCollectionView: UIView {
     public func select(at index: Int) {
         if index < collectionView.numberOfItems(inSection: 0) {
             collectionView(collectionView, didSelectItemAt: IndexPath(row: index, section: 0))
-            currentIndex = index
         }
     }
     
@@ -113,14 +111,12 @@ extension FeedUITagCollectionView: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedUITagCell.reuseIdentifier, for: indexPath) as! FeedUITagCell
         cell.configure(name: items[indexPath.item])
-        print("cellForItemAt tag: \(String(describing: cell.tagLabel.text))")
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selected = indexPath
         delegate?.select(tag: items[indexPath.item])
-        currentIndex = indexPath.item
     }
 }
 

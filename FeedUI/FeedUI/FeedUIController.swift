@@ -87,13 +87,14 @@ class FeedUIController: UIViewController {
             self?.feedCollectionView.setContentOffsetToZero()
         }
         
-        self.viewModel.reloaded = { [weak self] in
+        self.viewModel.reloadedSources = { [weak self] in
             self?.feedCollectionView.reloadData()
         }
         
-        self.viewModel.fetched = { [weak self] in
+        self.viewModel.fetchedSources = { [weak self] in
             guard let self = self else { return }
             self.headerView.update(with: (self.viewModel.getTags()))
+            self.feedCollectionView.update()
         }
     }
     

@@ -8,26 +8,20 @@
 import Foundation
 
 class FeedUIViewModel {
-    private var currentTag: String = "전체" {
+    private var currentTag: String = "" {
         didSet {
             DispatchQueue.main.async {
                 self.changedTag?()
+                self.reloadedSources?()
             }
         }
     }
     
     private var allSources = FeedDataSource.allVideos()
+    private(set) var filteredSources = FeedDataSource(videos: [FeedDataInfo]())
     
-    private(set) var filteredSources = FeedDataSource(videos: [FeedDataInfo]()) {
-        didSet {
-            DispatchQueue.main.async {
-                self.reloaded?()
-            }
-        }
-    }
-    
-    var fetched: (() -> Void)?
-    var reloaded: (() -> Void)?
+    var fetchedSources: (() -> Void)?
+    var reloadedSources: (() -> Void)?
     var changedTag: (() -> Void)?
     
     private var isLoading: Bool = false
@@ -67,6 +61,8 @@ class FeedUIViewModel {
                 return doesCategoryMatch && video.title.lowercased().contains(searchText.lowercased())
             }
         }))
+        
+        self.reloadedSources?()
     }
     
     func fetch(completion: @escaping (() -> Void)) {
@@ -80,9 +76,10 @@ class FeedUIViewModel {
                 if 0 < appendVideos.count {
                     self.allSources.append(contentsOf: appendVideos)
                     self.filter(by: self.currentTag)
+                    //self.fetched?()
                     DispatchQueue.main.async {
                         self.isLoading = false
-                        self.fetched?()
+                        self.fetchedSources?()
                         completion()
                     }
                 } else {

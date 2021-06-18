@@ -66,7 +66,14 @@ class FeedUIImageCollectionView: UIView {
     }
     
     func reloadData() {
-        collectionView.reloadData()        
+        collectionView.reloadData()
+    }
+    
+    func update() {
+        let lastInArray = collectionView.numberOfItems(inSection: 0)
+        let newLastInArray = viewModel?.dataCount ?? lastInArray
+        let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
+        collectionView.insertItems(at: indexPaths)
     }
     
     func setContentOffsetToZero() {
