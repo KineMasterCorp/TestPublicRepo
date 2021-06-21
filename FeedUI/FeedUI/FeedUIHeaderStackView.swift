@@ -7,15 +7,15 @@
 
 import UIKit
 
-protocol FeedUITagDelegate: AnyObject {
-    func select(tag: String) -> Void
+protocol FeedUICategoryDelegate: AnyObject {
+    func select(category: String) -> Void
 }
 
 protocol FeedUISearchDelegate: AnyObject {
     func search(with text: String) -> Void
 }
 
-protocol FeedUIHeaderStackViewDelegate: FeedUITagDelegate, FeedUISearchDelegate {
+protocol FeedUIHeaderStackViewDelegate: FeedUICategoryDelegate, FeedUISearchDelegate {
     func closeButtonTapped()
 }
 
@@ -78,8 +78,8 @@ class FeedUIHeaderStackView: UIView {
         return stackView
     }()
     
-    private lazy var collectionView: FeedUITagCollectionView = {
-        let view = FeedUITagCollectionView(items: items)
+    private lazy var collectionView: FeedUICategoryCollectionView = {
+        let view = FeedUICategoryCollectionView(items: items)
         view.delegate = delegate
         return view
     }()

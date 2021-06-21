@@ -8,10 +8,10 @@
 import Foundation
 
 class FeedUIViewModel {
-    private var currentTag: String = "" {
+    private var currentCategory: String = "" {
         didSet {
             DispatchQueue.main.async {
-                self.changedTag?()
+                self.changedCategory?()
                 self.reloadedSources?()
             }
         }
@@ -22,7 +22,7 @@ class FeedUIViewModel {
     
     var fetchedSources: (() -> Void)?
     var reloadedSources: (() -> Void)?
-    var changedTag: (() -> Void)?
+    var changedCategory: (() -> Void)?
     
     private var isLoading: Bool = false
     
@@ -34,7 +34,7 @@ class FeedUIViewModel {
         return filteredSources.getDataInfo(of: index)
     }
     
-    func getTags() -> [String] {
+    func getCateogries() -> [String] {
         var items = [String]()
         items.append("전체")
         items.append(contentsOf: allSources.videos.compactMap { video in video.category }.uniqued())
@@ -47,14 +47,14 @@ class FeedUIViewModel {
             return doesCategoryMatch
         }))
         
-        if currentTag != category {
-            currentTag = category
+        if currentCategory != category {
+            currentCategory = category
         }
     }
     
     func filter(with searchText: String) {
         filteredSources = FeedDataSource(videos: allSources.videos.filter({(video : FeedDataInfo) -> Bool in
-            let doesCategoryMatch = (currentTag == "전체") || (video.category == currentTag)
+            let doesCategoryMatch = (currentCategory == "전체") || (video.category == currentCategory)
             if searchText.isEmpty {
                 return doesCategoryMatch
             } else {
@@ -75,7 +75,7 @@ class FeedUIViewModel {
 
                 if 0 < appendVideos.count {
                     self.allSources.append(contentsOf: appendVideos)
-                    self.filter(by: self.currentTag)
+                    self.filter(by: self.currentCategory)
                     //self.fetched?()
                     DispatchQueue.main.async {
                         self.isLoading = false

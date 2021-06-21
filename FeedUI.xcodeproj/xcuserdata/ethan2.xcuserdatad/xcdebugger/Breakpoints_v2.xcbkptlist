@@ -1480,7 +1480,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "111"
             endingLineNumber = "111"
-            landmarkName = "select(tag:)"
+            landmarkName = "select(category:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1622,9 +1622,9 @@
             filePath = "FeedUI/FeedUI/FeedUIImageCollectionView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
-            landmarkName = "collectionView(_:cellForItemAt:)"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "collectionView(_:heightForPhotoAtIndexPath:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1878,10 +1878,8 @@
             filePath = "FeedUI/FeedUI/FeedUIImageCollectionView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "126"
-            endingLineNumber = "126"
-            landmarkName = "collectionView(_:heightForPhotoAtIndexPath:)"
-            landmarkType = "7">
+            startingLineNumber = "145"
+            endingLineNumber = "145">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1894,10 +1892,8 @@
             filePath = "FeedUI/FeedUI/FeedUIImageCollectionView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "125"
-            endingLineNumber = "125"
-            landmarkName = "collectionView(_:heightForPhotoAtIndexPath:)"
-            landmarkType = "7">
+            startingLineNumber = "144"
+            endingLineNumber = "144">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1910,10 +1906,8 @@
             filePath = "FeedUI/FeedUI/FeedUIImageCollectionView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "collectionView(_:heightForPhotoAtIndexPath:)"
-            landmarkType = "7">
+            startingLineNumber = "141"
+            endingLineNumber = "141">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1977,6 +1971,22 @@
             startingLineNumber = "50"
             endingLineNumber = "50"
             landmarkName = "filter(by:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "79D4A548-DFC2-4E8A-907F-E18CD60FF95F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FeedUI/FeedUI/FeedUIImageCollectionView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "paginateMore()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

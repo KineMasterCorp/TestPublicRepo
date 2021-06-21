@@ -26,12 +26,12 @@
 		92A7033926783C4000C526F9 /* ActualGradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033826783C4000C526F9 /* ActualGradientButton.swift */; };
 		92A7033B2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033A2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift */; };
 		92A7033F2679085100C526F9 /* FeedUIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A7033E2679085000C526F9 /* FeedUIViewModel.swift */; };
-		92A703412679C66A00C526F9 /* FeedUITagCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A703402679C66A00C526F9 /* FeedUITagCollectionView.swift */; };
+		92A703412679C66A00C526F9 /* FeedUICategoryCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92A703402679C66A00C526F9 /* FeedUICategoryCollectionView.swift */; };
 		92AC76E22665D43000239211 /* FeedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76DE2665D43000239211 /* FeedDataSource.swift */; };
 		92AC76E32665D43000239211 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76DF2665D43000239211 /* FeedViewController.swift */; };
 		92AC76E42665D43000239211 /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */; };
 		92AE5711266F4F5500DD163B /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AE5710266F4F5500DD163B /* Extensions.swift */; };
-		92AE57162670B4CB00DD163B /* FeedUITagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AE57152670B4CB00DD163B /* FeedUITagCell.swift */; };
+		92AE57162670B4CB00DD163B /* FeedUICategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AE57152670B4CB00DD163B /* FeedUICategoryCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,12 +59,12 @@
 		92A7033826783C4000C526F9 /* ActualGradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActualGradientButton.swift; sourceTree = "<group>"; };
 		92A7033A2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeInteractor+Navigator+Presenter.swift"; sourceTree = "<group>"; };
 		92A7033E2679085000C526F9 /* FeedUIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIViewModel.swift; sourceTree = "<group>"; };
-		92A703402679C66A00C526F9 /* FeedUITagCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUITagCollectionView.swift; sourceTree = "<group>"; };
+		92A703402679C66A00C526F9 /* FeedUICategoryCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUICategoryCollectionView.swift; sourceTree = "<group>"; };
 		92AC76DE2665D43000239211 /* FeedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedDataSource.swift; sourceTree = "<group>"; };
 		92AC76DF2665D43000239211 /* FeedViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCollectionViewCell.swift; sourceTree = "<group>"; };
 		92AE5710266F4F5500DD163B /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		92AE57152670B4CB00DD163B /* FeedUITagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUITagCell.swift; sourceTree = "<group>"; };
+		92AE57152670B4CB00DD163B /* FeedUICategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUICategoryCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,10 +161,10 @@
 			children = (
 				9230753D265B9B9500D411B2 /* FeedUIImageCell.swift */,
 				92307539265B997D00D411B2 /* FeedUIImageCollectionView.swift */,
-				92AE57152670B4CB00DD163B /* FeedUITagCell.swift */,
+				92AE57152670B4CB00DD163B /* FeedUICategoryCell.swift */,
 				92307574265E23E800D411B2 /* FeedUIHeaderStackView.swift */,
 				92307572265E22FB00D411B2 /* FeedUIController.swift */,
-				92A703402679C66A00C526F9 /* FeedUITagCollectionView.swift */,
+				92A703402679C66A00C526F9 /* FeedUICategoryCollectionView.swift */,
 				92A7033E2679085000C526F9 /* FeedUIViewModel.swift */,
 				9230753B265B9A9D00D411B2 /* PinterestLayout.swift */,
 			);
@@ -271,7 +271,7 @@
 				92AC76E42665D43000239211 /* VideoCollectionViewCell.swift in Sources */,
 				9230753E265B9B9500D411B2 /* FeedUIImageCell.swift in Sources */,
 				9229FBD52660F4D5009BA67D /* HomeViewController.swift in Sources */,
-				92A703412679C66A00C526F9 /* FeedUITagCollectionView.swift in Sources */,
+				92A703412679C66A00C526F9 /* FeedUICategoryCollectionView.swift in Sources */,
 				929F6E3C266DE3C40008CA69 /* ImageURLProtocol.swift in Sources */,
 				92A7033F2679085100C526F9 /* FeedUIViewModel.swift in Sources */,
 				92A7033626783BB600C526F9 /* SequentialBackgroundView.swift in Sources */,
@@ -281,7 +281,7 @@
 				929F6E3E266DF3860008CA69 /* FeedUIImage.swift in Sources */,
 				92AE5711266F4F5500DD163B /* Extensions.swift in Sources */,
 				92A7033B2678959B00C526F9 /* HomeInteractor+Navigator+Presenter.swift in Sources */,
-				92AE57162670B4CB00DD163B /* FeedUITagCell.swift in Sources */,
+				92AE57162670B4CB00DD163B /* FeedUICategoryCell.swift in Sources */,
 				92307575265E23E800D411B2 /* FeedUIHeaderStackView.swift in Sources */,
 				9230753A265B997D00D411B2 /* FeedUIImageCollectionView.swift in Sources */,
 				92A7033926783C4000C526F9 /* ActualGradientButton.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  FeedUITagCollectionView.swift
+//  FeedUICategoryCollectionView.swift
 //  FeedUI
 //
 //  Created by ETHAN2 on 2021/06/16.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class FeedUITagCollectionView: UIView {
+class FeedUICategoryCollectionView: UIView {
     private var items: [String]
     
-    private lazy var tagLayout: UICollectionViewFlowLayout = {
+    private lazy var categoryLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 8
@@ -20,8 +20,8 @@ class FeedUITagCollectionView: UIView {
     }()
     
     private lazy var collectionView: UICollectionView = {
-        let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: tagLayout)
-        view.register(FeedUITagCell.self, forCellWithReuseIdentifier: FeedUITagCell.reuseIdentifier)
+        let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: categoryLayout)
+        view.register(FeedUICategoryCell.self, forCellWithReuseIdentifier: FeedUICategoryCell.reuseIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = FeedUIController.backgroundColor
         return view
@@ -67,20 +67,20 @@ class FeedUITagCollectionView: UIView {
     private var selected: IndexPath? {
         didSet {
             if let path = oldValue, path != selected {
-                if let prevCell = collectionView.cellForItem(at:path) as? FeedUITagCell {
+                if let prevCell = collectionView.cellForItem(at:path) as? FeedUICategoryCell {
                     prevCell.backgroundColor = defaultColor
-                    prevCell.tagLabel.textColor = .white
-                    prevCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+                    prevCell.categoryLabel.textColor = .white
+                    prevCell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
                 }
             }
         }
         
         willSet {
             if let path = newValue {
-                if let tappedCell = collectionView.cellForItem(at:path) as? FeedUITagCell {
+                if let tappedCell = collectionView.cellForItem(at:path) as? FeedUICategoryCell {
                     tappedCell.backgroundColor = selectedColor
-                    tappedCell.tagLabel.textColor = .black
-                    tappedCell.tagLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+                    tappedCell.categoryLabel.textColor = .black
+                    tappedCell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
                 }
             }
         }
@@ -97,31 +97,31 @@ class FeedUITagCollectionView: UIView {
         self.collectionView.insertItems(at: indexPaths)
     }
     
-    public weak var delegate: FeedUITagDelegate?
+    public weak var delegate: FeedUICategoryDelegate?
     
     private var selectedColor = UIColor.hexStringToUIColor(hex: "#ff5b5b")
     private var defaultColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.05)
 }
 
-extension FeedUITagCollectionView: UICollectionViewDataSource, UICollectionViewDelegate {
+extension FeedUICategoryCollectionView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedUITagCell.reuseIdentifier, for: indexPath) as! FeedUITagCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedUICategoryCell.reuseIdentifier, for: indexPath) as! FeedUICategoryCell
         cell.configure(name: items[indexPath.item])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selected = indexPath
-        delegate?.select(tag: items[indexPath.item])
+        delegate?.select(category: items[indexPath.item])
     }
 }
 
-extension FeedUITagCollectionView: UICollectionViewDelegateFlowLayout {
+extension FeedUICategoryCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return FeedUITagCell.fittingSize(name: items[indexPath.item])
+        return FeedUICategoryCell.fittingSize(name: items[indexPath.item])
     }
 }

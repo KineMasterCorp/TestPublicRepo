@@ -1,5 +1,5 @@
 //
-//  FeedUITagCell.swift
+//  FeedUICategoryCell.swift
 //  FeedUI
 //
 //  Created by ETHAN2 on 2021/06/09.
@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class FeedUITagCell: UICollectionViewCell {
-    public static let reuseIdentifier = "FeedUITagCell"
+final class FeedUICategoryCell: UICollectionViewCell {
+    public static let reuseIdentifier = "FeedUICategoryCell"
     
     static func fittingSize(name: String?) -> CGSize {
-        let cell = FeedUITagCell()
+        let cell = FeedUICategoryCell()
         cell.configure(name: name)
         
         let label = UILabel()
@@ -24,7 +24,7 @@ final class FeedUITagCell: UICollectionViewCell {
         return CGSize(width: size.width + 40, height: size.height + 16)
     }
         
-    var tagLabel: UILabel = {
+    var categoryLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
@@ -53,18 +53,18 @@ final class FeedUITagCell: UICollectionViewCell {
     private func setupView() {
         backgroundColor = .init(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.05)
         
-        addSubview(tagLabel)
+        addSubview(categoryLabel)
         
         layoutConstraints.append(
-            contentsOf: [tagLabel.topAnchor.constraint(equalTo: topAnchor),
-                         tagLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-                         tagLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-                         tagLabel.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            contentsOf: [categoryLabel.topAnchor.constraint(equalTo: topAnchor),
+                         categoryLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+                         categoryLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+                         categoryLabel.bottomAnchor.constraint(equalTo: bottomAnchor)])
         
         NSLayoutConstraint.activate(layoutConstraints)
     }
     
     func configure(name: String?) {
-        tagLabel.text = name
+        categoryLabel.text = name
     }
 }

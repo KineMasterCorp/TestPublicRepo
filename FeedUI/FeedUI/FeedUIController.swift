@@ -30,7 +30,7 @@ class FeedUIController: UIViewController {
     }
     
     private lazy var headerView: FeedUIHeaderStackView = {
-        let view = FeedUIHeaderStackView(items: viewModel.getTags(), delegate: self)
+        let view = FeedUIHeaderStackView(items: viewModel.getCateogries(), delegate: self)
         view.translatesAutoresizingMaskIntoConstraints = false        
         return view
     } ()
@@ -83,7 +83,7 @@ class FeedUIController: UIViewController {
         
         NSLayoutConstraint.activate(layoutConstraints)
         
-        self.viewModel.changedTag = { [weak self] in
+        self.viewModel.changedCategory = { [weak self] in
             self?.feedCollectionView.setContentOffsetToZero()
         }
         
@@ -93,7 +93,7 @@ class FeedUIController: UIViewController {
         
         self.viewModel.fetchedSources = { [weak self] in
             guard let self = self else { return }
-            self.headerView.update(with: (self.viewModel.getTags()))
+            self.headerView.update(with: (self.viewModel.getCateogries()))
             self.feedCollectionView.update()
         }
     }
@@ -107,8 +107,8 @@ class FeedUIController: UIViewController {
 }
 
 extension FeedUIController: FeedUIHeaderStackViewDelegate {
-    func select(tag: String) -> Void {
-        viewModel.filter(by: tag)        
+    func select(category: String) -> Void {
+        viewModel.filter(by: category)
     }
     
     func search(with text: String) -> Void {
