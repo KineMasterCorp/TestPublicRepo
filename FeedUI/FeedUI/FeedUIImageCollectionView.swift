@@ -9,8 +9,8 @@ import UIKit
 
 class FeedUIImageCollectionView: UIView {
     public weak var feedInfoDelegate: FeedInfoDelegate?
-    
-    private var viewModel: FeedUIViewModel?
+        
+    private var viewModel: FeedImageViewModel
     
     private lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: PinterestLayout())
@@ -21,26 +21,30 @@ class FeedUIImageCollectionView: UIView {
         return view
     }()
     
-    init(viewModel: FeedUIViewModel) {
+    init(viewModel: FeedImageViewModel, delegate: FeedInfoDelegate?) {
+        self.viewModel = viewModel
+        self.feedInfoDelegate = delegate
+        
         super.init(frame: .zero)
         
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         self.collectionView.alwaysBounceVertical = true
-                
-        addSubview(collectionView)
-        
         if let layout = collectionView.collectionViewLayout as? PinterestLayout {
             layout.delegate = self
         }
         
-        let refreshControl = UIRefreshControl.init(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-        refreshControl.triggerVerticalOffset = 50
+        addSubview(collectionView)
+        
+        setupRefreshControl()
+    }
+    
+    private func setupRefreshControl() {
+        let refreshControl = UIRefreshControl.init(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        refreshControl.triggerVerticalOffset = 20
         refreshControl.addTarget(self, action: #selector(paginateMore), for: .valueChanged)
         refreshControl.tintColor = .systemPink
         self.collectionView.bottomRefreshControl = refreshControl
-        
-        self.viewModel = viewModel        
     }
         
     required init?(coder: NSCoder) {
@@ -53,41 +57,54 @@ class FeedUIImageCollectionView: UIView {
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),            
             collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
     
     @objc func paginateMore() {
-        print("paginateMore")
-        viewModel?.fetch() { [weak collectionView] in
-            collectionView?.bottomRefreshControl?.endRefreshing()
-        }
-    }
-    
-    func reloadData() {
-        collectionView.reloadData()
-    }
-    
-    func update() {
-        let lastInArray = collectionView.numberOfItems(inSection: 0)
-        let newLastInArray = viewModel?.dataCount ?? lastInArray
-        let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
-        collectionView.insertItems(at: indexPaths)
+        feedInfoDelegate?.pullUpToRefresh()
     }
     
     func setContentOffsetToZero() {
         collectionView.setContentOffset(.zero, animated: false)
     }
+    
+    func reload(with viewModel: FeedImageViewModel) {
+        self.viewModel = viewModel
+        collectionView.reloadData()
+    }
+    
+    func update(with updatedViewModel: FeedImageViewModel?) {
+        if let updatedViewModel = updatedViewModel {
+            let lastInArray = viewModel.cellModels.count
+            
+            let newCells = updatedViewModel.cellModels.filter { newCell in
+                !viewModel.cellModels.contains(where: { originCell in
+                    originCell.url == newCell.url
+                })
+            }
+            
+            self.viewModel.cellModels.append(contentsOf: newCells)
+            let newLastInArray = viewModel.cellModels.count
+            
+            let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
+            
+            self.collectionView.insertItems(at: indexPaths)            
+        }
+         
+        self.collectionView.bottomRefreshControl?.endRefreshing()        
+    }
 }
 
 protocol FeedInfoDelegate: AnyObject {
     func select(at index: Int) -> Void
+    func pullUpToRefresh() -> Void
 }
 
 extension FeedUIImageCollectionView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel?.dataCount ?? 0
+        return viewModel.cellCount
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -96,19 +113,11 @@ extension FeedUIImageCollectionView: UICollectionViewDataSource, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedUIImageCell.reuseIdentifier, for: indexPath)
-        if let feedCell = cell as? FeedUIImageCell {
-            let dataInfo = viewModel?.getDataInfo(of: indexPath.item)
-            feedCell.item = dataInfo?.imageItem
-            feedCell.captionLabel.text = dataInfo?.title
-            
-            ImageCache.publicCache.load(url: feedCell.item!.url as NSURL, item: feedCell.item!) { (fetchedItem, image) in
-                if let img = image, img != fetchedItem.image {
-                    feedCell.imageView.image = image
-                } else {
-                    print("image load failed")
-                }
-            }
+        if viewModel.cellCount > indexPath.item, let feedCell = cell as? FeedUIImageCell {
+            let cellModel = viewModel.cellModel(for: indexPath)
+            feedCell.configure(with: cellModel)
         }
+        
         return cell
     }
 }
@@ -116,15 +125,6 @@ extension FeedUIImageCollectionView: UICollectionViewDataSource, UICollectionVie
 extension FeedUIImageCollectionView: PinterestLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         heightForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
-        
-        if let dataInfo = viewModel?.getDataInfo(of: indexPath.item) {
-            if nil == dataInfo.imageItem.height {
-                dataInfo.imageItem.height = CGFloat.random(in: 150...300)
-            }
-            
-            return dataInfo.imageItem.height!
-        }
-        
-        return 0
+        return viewModel.cellModel(for: indexPath).height
     }
 }

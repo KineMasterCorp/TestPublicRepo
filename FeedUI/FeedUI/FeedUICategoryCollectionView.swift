@@ -7,8 +7,19 @@
 
 import UIKit
 
+//struct FeedViewModel {
+//    let hewaderViewModel: FeedHeaderViewModel
+//    let cellModels: [FeedViewCellModel]
+//}
+
+
+
+
+
 class FeedUICategoryCollectionView: UIView {
-    private var items: [String]
+    private var cellModels: [CategoryCellModel]
+    private weak var delegate: FeedUICategoryDelegate?
+    private var selectedIndex: Int = -1
     
     private lazy var categoryLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
@@ -27,8 +38,10 @@ class FeedUICategoryCollectionView: UIView {
         return view
     }()
     
-    init(items: [String]) {
-        self.items = items
+    init(cellModels: [CategoryCellModel], delegate: FeedUICategoryDelegate?) {
+        self.cellModels = cellModels
+        self.delegate = delegate
+        
         super.init(frame: .zero)
         
         collectionView.delegate = self
@@ -37,6 +50,8 @@ class FeedUICategoryCollectionView: UIView {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
+        
+        selectedIndex = self.delegate?.initialSelectedIndex() ?? 0
         
         addSubview(collectionView)
     }
@@ -58,46 +73,34 @@ class FeedUICategoryCollectionView: UIView {
         ])
     }
     
-    public func select(at index: Int) {
-        if index < collectionView.numberOfItems(inSection: 0) {
-            collectionView(collectionView, didSelectItemAt: IndexPath(row: index, section: 0))
-        }
-    }
-    
-    private var selected: IndexPath? {
+    private var selectedCell: FeedUICategoryCell? {
         didSet {
-            if let path = oldValue, path != selected {
-                if let prevCell = collectionView.cellForItem(at:path) as? FeedUICategoryCell {
-                    prevCell.backgroundColor = defaultColor
-                    prevCell.categoryLabel.textColor = .white
-                    prevCell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-                }
+            if let cell = oldValue, cell != selectedCell {
+                cell.backgroundColor = defaultColor
+                cell.categoryLabel.textColor = .white
+                cell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
             }
         }
         
         willSet {
-            if let path = newValue {
-                if let tappedCell = collectionView.cellForItem(at:path) as? FeedUICategoryCell {
-                    tappedCell.backgroundColor = selectedColor
-                    tappedCell.categoryLabel.textColor = .black
-                    tappedCell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-                }
+            if let cell = newValue {
+                cell.backgroundColor = selectedColor
+                cell.categoryLabel.textColor = .black
+                cell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+                delegate?.select(category: cellModels[selectedIndex].category)
             }
         }
     }
-    
-    public func update(with items: [String]) {
-        let lastInArray = self.items.count
-        let newItems = items.filter { !self.items.contains($0) }
-        self.items.append(contentsOf: newItems)
-        let newLastInArray = self.items.count
+    public func update(with updatedViewModels: [CategoryCellModel]) {
+        let lastInArray = self.cellModels.count
+        let newItems = updatedViewModels.filter { !self.cellModels.contains($0) }
+        self.cellModels.append(contentsOf: newItems)
+        let newLastInArray = self.cellModels.count
         
         let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
         
         self.collectionView.insertItems(at: indexPaths)
     }
-    
-    public weak var delegate: FeedUICategoryDelegate?
     
     private var selectedColor = UIColor.hexStringToUIColor(hex: "#ff5b5b")
     private var defaultColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.05)
@@ -105,23 +108,28 @@ class FeedUICategoryCollectionView: UIView {
 
 extension FeedUICategoryCollectionView: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        return cellModels.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeedUICategoryCell.reuseIdentifier, for: indexPath) as! FeedUICategoryCell
-        cell.configure(name: items[indexPath.item])
+        cell.configure(name: cellModels[indexPath.item].category)
+        
+        if selectedCell == nil, indexPath.item == selectedIndex {
+            selectedCell = cell
+        }
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        selected = indexPath
-        delegate?.select(category: items[indexPath.item])
+        selectedIndex = indexPath.item
+        selectedCell = collectionView.cellForItem(at:indexPath) as? FeedUICategoryCell
     }
 }
 
 extension FeedUICategoryCollectionView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return FeedUICategoryCell.fittingSize(name: items[indexPath.item])
+        return FeedUICategoryCell.fittingSize(name: cellModels[indexPath.item].category)
     }
 }

@@ -13,3 +13,9 @@ extension Sequence where Element: Hashable {
         return filter { set.insert($0).inserted }
     }
 }
+
+extension Bool {
+    mutating func signal() {
+        self.toggle()
+    }
+}

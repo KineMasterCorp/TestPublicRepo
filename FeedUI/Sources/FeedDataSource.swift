@@ -23,19 +23,19 @@ class FeedDataInfo: Hashable {
     let title: String
     let tags: [String]
     let videoURL: URL
-    let poster: String
+    let poster: URL
     let category: String
     
-    let imageItem: FeedUIImage
+    //let imageItem: FeedUIImage
     
     init(title: String, tags: [String], videoURL: URL, poster: String, category: String) {
         self.title = title
         self.tags = tags
         self.videoURL = videoURL
-        self.poster = poster
+        self.poster = URL(string: poster)!
         self.category = category
         
-        self.imageItem = FeedUIImage(image: ImageCache.publicCache.placeholderImage, url: URL(string: poster)!)
+        //self.imageItem = FeedUIImage(image: ImageCache.publicCache.placeholderImage, url: URL(string: poster)!)
     }
 
     var asset: AVURLAsset?
