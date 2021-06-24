@@ -18,5 +18,6 @@
 @interface UIRefreshControl (BottomRefreshControl)
 
 @property (nonatomic) CGFloat triggerVerticalOffset;
+@property (nonatomic) Boolean adjustBottomInset;
 
 @end

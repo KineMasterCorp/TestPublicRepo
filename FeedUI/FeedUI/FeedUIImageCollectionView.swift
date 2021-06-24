@@ -90,8 +90,11 @@ class FeedUIImageCollectionView: UIView {
             
             let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
             
-            self.collectionView.insertItems(at: indexPaths)            
-        }
+            self.collectionView.insertItems(at: indexPaths)
+            self.collectionView.bottomRefreshControl?.adjustBottomInset = true
+        } else {
+            self.collectionView.bottomRefreshControl?.adjustBottomInset = false
+        }        
          
         self.collectionView.bottomRefreshControl?.endRefreshing()        
     }

@@ -51,10 +51,12 @@
 NSString *const kRefrehControllerEndRefreshingNotification = @"RefrehControllerEndRefreshing";
 
 const CGFloat kDefaultTriggerRefreshVerticalOffset = 120.;
+const Boolean kDefaultAdjustBottomInset = FALSE;
 
 
 static char kBRCManualEndRefreshingKey;
 static char kTriggerVerticalOffsetKey;
+static char kAdjustBottomInsetKey;
 
 @implementation UIRefreshControl (BottomRefreshControl)
 
@@ -62,7 +64,6 @@ static char kTriggerVerticalOffsetKey;
     
     [self brc_swizzleMethod:@selector(endRefreshing) withMethod:@selector(brc_endRefreshing)];
 }
-
 
 - (void)brc_endRefreshing {
     
@@ -93,6 +94,16 @@ static char kTriggerVerticalOffsetKey;
     
     NSNumber *offset = objc_getAssociatedObject(self, &kTriggerVerticalOffsetKey);
     return (offset) ? [offset floatValue] : kDefaultTriggerRefreshVerticalOffset;
+}
+
+- (void)setAdjustBottomInset:(Boolean)adjustBottomInset {
+    objc_setAssociatedObject(self, &kAdjustBottomInsetKey, @(adjustBottomInset), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (Boolean)adjustBottomInset {
+    
+    NSNumber *value = objc_getAssociatedObject(self, &kAdjustBottomInsetKey);
+    return (value) ? [value boolValue] : kDefaultAdjustBottomInset;
 }
 
 - (UILabel *)brc_titleLabel {
@@ -157,7 +168,7 @@ const CGFloat kMinRefershTime = 0.5;
 - (void)brc_setContentInset:(UIEdgeInsets)insets {
     
     if (self.brc_adjustBottomInset)
-        insets.bottom += self.bottomRefreshControl.frame.size.height;
+        insets.bottom += self.bottomRefreshControl.frame.size.height / 3;
         
     [self brc_setContentInset:insets];
     
@@ -170,7 +181,7 @@ const CGFloat kMinRefershTime = 0.5;
     UIEdgeInsets insets = [self brc_contentInset];
     
     if (self.brc_adjustBottomInset)
-        insets.bottom -= self.bottomRefreshControl.frame.size.height;
+        insets.bottom -= self.bottomRefreshControl.frame.size.height / 3;
     
     return insets;
 }
@@ -253,9 +264,11 @@ const CGFloat kMinRefershTime = 0.5;
     UIEdgeInsets contentInset = self.contentInset;
     self.brc_context.adjustBottomInset = adjust;
     
-    if (animated)
+    if (animated) {
         [UIView beginAnimations:0 context:0];
-
+        [UIView setAnimationDuration:0.4];
+    }
+        
     self.contentInset = contentInset;
     
     if (animated)
@@ -369,7 +382,7 @@ const CGFloat kMinRefershTime = 0.5;
     if (!self.tracking && self.brc_adjustBottomInset) {
      
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self brc_SetAdjustBottomInset:NO animated:YES];
+            [self brc_SetAdjustBottomInset:kAdjustBottomInsetKey animated:YES];
         });
     }
     
