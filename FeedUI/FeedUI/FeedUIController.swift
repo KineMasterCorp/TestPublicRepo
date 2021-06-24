@@ -114,8 +114,9 @@ extension FeedUIController: FeedInfoDelegate {
     }
     
     func select(at index: Int) -> Void {
+        viewModel.updateVideoViewModel()
         
-        let controller = FeedViewController(viewModel: viewModel.videoViewModel, startIndex: index)        
+        let controller = FeedViewController(viewModel: viewModel.videoViewModel, startIndex: index)
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
     }

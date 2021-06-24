@@ -114,6 +114,8 @@ class FeedImageViewModel {
 
 class FeedUIViewModel {
     private var sources = FeedDataSource.allVideos()
+    private var filteredDataInfos: [FeedDataInfo]?
+    
     private var isLoading: Bool = false
     
     private(set) var imageViewModel: FeedImageViewModel
@@ -146,11 +148,21 @@ class FeedUIViewModel {
         headerViewModel.cellModels.append(contentsOf: newCategories)
     }
     
+    internal func updateVideoViewModel() {
+        videoViewModel = FeedVideoViewModel(cellModels: filteredDataInfos!.map {
+            VideoCellModel(title: $0.title, tags: $0.tags, url: $0.videoURL)
+        })
+    }
+    
     internal func updateImageViewModel(byFiltering category: String) {
-        imageViewModel = FeedImageViewModel(cellModels: sources.videos.filter({(video : FeedDataInfo) -> Bool in
+        filteredDataInfos = sources.videos.filter{(video : FeedDataInfo) -> Bool in
             let doesCategoryMatch = (category == "전체") || (video.category == category)
             return doesCategoryMatch
-        }).map { ImageCellModel(title: $0.title, url: $0.poster) })
+        }
+        
+        imageViewModel = FeedImageViewModel(cellModels: filteredDataInfos!.map {
+            ImageCellModel(title: $0.title, url: $0.poster)
+        })
         
         if headerViewModel.selectedCategory != category {
             headerViewModel.selectedCategory = category
@@ -158,7 +170,7 @@ class FeedUIViewModel {
     }
     
     internal func updateImageViewModel(with searchText: String) {
-        imageViewModel = FeedImageViewModel(cellModels: sources.videos.filter( { (video : FeedDataInfo) -> Bool in
+        filteredDataInfos = sources.videos.filter( { (video : FeedDataInfo) -> Bool in
             let doesCategoryMatch = (headerViewModel.selectedCategory == "전체") ||
                 (video.category == headerViewModel.selectedCategory)
             if searchText.isEmpty {
@@ -166,7 +178,9 @@ class FeedUIViewModel {
             } else {
                 return doesCategoryMatch && video.title.lowercased().contains(searchText.lowercased())
             }
-        }).map { ImageCellModel(title: $0.title, url: $0.poster) })
+        })
+        
+        imageViewModel = FeedImageViewModel(cellModels: filteredDataInfos!.map { ImageCellModel(title: $0.title, url: $0.poster) })
         
         loadImageViewIfNeeded.signal()
     }

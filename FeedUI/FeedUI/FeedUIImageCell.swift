@@ -16,6 +16,7 @@ class FeedUIImageCell: UICollectionViewCell {
         image.layer.cornerRadius = 6
         image.layer.masksToBounds = true
         image.contentMode = .scaleAspectFill
+        image.backgroundColor = .clear
         return image
     } ()
     
@@ -40,6 +41,7 @@ class FeedUIImageCell: UICollectionViewCell {
     
     public func configure(with cellModel: ImageCellModel) {
         titleLabel.text = cellModel.title
+        imageView.image = ImageCache.publicCache.placeholderImage
         
         cellModel.load { [weak self] image in
             self?.imageView.image = image
