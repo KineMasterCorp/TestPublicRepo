@@ -7,24 +7,25 @@
 
 import UIKit
 
-protocol FeedUITagDelegate: AnyObject {
-    func select(tag: String) -> Void
+protocol FeedUICategoryDelegate: AnyObject {
+    func select(category: String) -> Void
+    func initialSelectedIndex() -> Int
 }
 
 protocol FeedUISearchDelegate: AnyObject {
     func search(with text: String) -> Void
 }
 
-protocol FeedUIHeaderStackViewDelegate: FeedUITagDelegate, FeedUISearchDelegate {
+protocol FeedUIHeaderStackViewDelegate: FeedUICategoryDelegate, FeedUISearchDelegate {
     func closeButtonTapped()
 }
 
 class FeedUIHeaderStackView: UIView {
-    private var items: [String]
+    private var viewModel: FeedHeaderViewModel
     private weak var delegate: FeedUIHeaderStackViewDelegate?
     
-    init(items: [String], delegate: FeedUIHeaderStackViewDelegate?) {
-        self.items = items
+    init(viewModel: FeedHeaderViewModel, delegate: FeedUIHeaderStackViewDelegate?) {
+        self.viewModel = viewModel
         self.delegate = delegate
         
         super.init(frame: .zero)
@@ -78,9 +79,8 @@ class FeedUIHeaderStackView: UIView {
         return stackView
     }()
     
-    private lazy var collectionView: FeedUITagCollectionView = {
-        let view = FeedUITagCollectionView(items: items)
-        view.delegate = delegate
+    private lazy var collectionView: FeedUICategoryCollectionView = {
+        let view = FeedUICategoryCollectionView(cellModels: viewModel.cellModels, delegate: delegate)
         return view
     }()
     
@@ -167,12 +167,8 @@ class FeedUIHeaderStackView: UIView {
         delegate?.closeButtonTapped()
     }
     
-    func selectItem(at index: Int) {
-        collectionView.select(at: index)
-    }
-    
-    func update(with items: [String]) {
-        collectionView.update(with: items)
+    func update(with viewModel: FeedHeaderViewModel) {
+        collectionView.update(with: viewModel.cellModels)
     }
 }
 

@@ -9,16 +9,18 @@ import UIKit
 
 class FeedUIImageCell: UICollectionViewCell {
     public static let reuseIdentifier = "FeedUIImageCell"
+    
     var imageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.layer.cornerRadius = 6
         image.layer.masksToBounds = true
         image.contentMode = .scaleAspectFill
+        image.backgroundColor = .clear
         return image
     } ()
     
-    var captionLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
@@ -27,38 +29,39 @@ class FeedUIImageCell: UICollectionViewCell {
         return label
     } ()
     
-    private var layoutConstraints: [NSLayoutConstraint]
-    
     override init(frame: CGRect) {
-        layoutConstraints = .init()
         super.init(frame: frame)
                         
-        addSubview(imageView)
-        layoutConstraints.append(
-            contentsOf: [imageView.topAnchor.constraint(equalTo: topAnchor),
-                         imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                         imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                         imageView.bottomAnchor.constraint(equalTo: captionLabel.topAnchor, constant: -6)])
-        
-        addSubview(captionLabel)
-        layoutConstraints.append(
-            contentsOf: [captionLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 6),
-                         captionLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-                         captionLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-                         captionLabel.bottomAnchor.constraint(equalTo: bottomAnchor)])
-        
-        NSLayoutConstraint.activate(layoutConstraints)
+        buildSubviews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var item: FeedUIImage? {
-        didSet {
-            if let item = item {
-                imageView.image = item.image
-            }
+    public func configure(with cellModel: ImageCellModel) {
+        titleLabel.text = cellModel.title
+        imageView.image = ImageCache.publicCache.placeholderImage
+        
+        cellModel.load { [weak self] image in
+            self?.imageView.image = image
         }
-    }    
+    }
+    
+    func buildSubviews() {
+        addSubview(imageView)
+        addSubview(titleLabel)
+        
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
+            
+            titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 6),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
 }

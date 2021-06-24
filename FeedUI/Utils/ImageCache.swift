@@ -10,19 +10,25 @@ public class ImageCache {
     
     public static let publicCache = ImageCache()
     var placeholderImage = UIImage()
-    private let cachedImages = NSCache<NSURL, UIImage>()
-    private var loadingResponses = [NSURL: [(FeedUIImage, UIImage?) -> Swift.Void]]()
+    
+    private let cachedImages: NSCache<NSURL, UIImage> = {
+        let cache = NSCache<NSURL, UIImage>()
+        cache.totalCostLimit = 1024 * 1024 * 50 // 50 MB
+        return cache
+    }()
+    
+    private var loadingResponses = [NSURL: [(UIImage?) -> Swift.Void]]()
     
     public final func image(url: NSURL) -> UIImage? {
         return cachedImages.object(forKey: url)
     }
     /// - Tag: cache
     // Returns the cached image if available, otherwise asynchronously loads and caches it.
-    final func load(url: NSURL, item: FeedUIImage, completion: @escaping (FeedUIImage, UIImage?) -> Swift.Void) {
+    final func load(url: NSURL, completion: @escaping (UIImage?) -> Swift.Void) {
         // Check for a cached image.
         if let cachedImage = image(url: url) {
             DispatchQueue.main.async {
-                completion(item, cachedImage)
+                completion(cachedImage)
             }
             return
         }
@@ -41,7 +47,7 @@ public class ImageCache {
                 print("image loading failed. \(url)")
                 self.loadingResponses[url] = nil
                 DispatchQueue.main.async {
-                    completion(item, nil)
+                    completion(nil)
                 }
                 return
             }
@@ -50,7 +56,7 @@ public class ImageCache {
             // Iterate over each requestor for the image and pass it back.
             for block in blocks {
                 DispatchQueue.main.async {
-                    block(item, image)
+                    block(image)
                 }
                 return
             }

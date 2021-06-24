@@ -9,10 +9,10 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
-    private lazy var sequentialBackgroundView: SequentialBackgroundView = {
-        let view = SequentialBackgroundView(frame: view.frame)
-        return view
-    }()
+//    private lazy var sequentialBackgroundView: SequentialBackgroundView = {
+//        let view = SequentialBackgroundView(frame: view.frame)
+//        return view
+//    }()
     
     private lazy var feedButton: ActualGradientButton = {
         let button = ActualGradientButton()
@@ -31,7 +31,7 @@ class HomeViewController: UIViewController {
     }
     
     private func setupSubviews() {
-        view.addSubview(sequentialBackgroundView)
+        //view.addSubview(sequentialBackgroundView)
         view.addSubview(feedButton)
         
         NSLayoutConstraint.activate([
@@ -46,6 +46,6 @@ class HomeViewController: UIViewController {
     }
     
     func update(with state: Home.ViewState) {
-        sequentialBackgroundView.setAnimatingState(state.animateBackground)
+        //sequentialBackgroundView.setAnimatingState(state.animateBackground)
     }
 }

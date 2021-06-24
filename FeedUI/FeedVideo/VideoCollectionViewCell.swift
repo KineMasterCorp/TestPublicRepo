@@ -16,8 +16,36 @@ class VideoCollectionViewCell: UICollectionViewCell {
     static let identifier = "VideoCollectionViewCell"
     // Subviews
     var player: AVPlayer?
-    var index: Int = -1
+    //var index: Int = -1
     private var playerLayer: AVPlayerLayer?
+    
+//    private lazy var vStackView: UIStackView = {
+//        let stackView = UIStackView()
+//        stackView.axis = .vertical
+//        stackView.spacing = 10
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.tintColor = .white
+//        
+//        return stackView
+//    }()
+//        
+//    var titleLabel: UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.textAlignment = .center
+//        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+//        label.textColor = .white
+//        return label
+//    } ()
+//    
+//    var tagLabel: UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.textAlignment = .center
+//        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+//        label.textColor = .white
+//        return label
+//    } ()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,17 +63,15 @@ class VideoCollectionViewCell: UICollectionViewCell {
         AVPlayer.instanceCount -= 1
     }
 
-    public func configure(with dataSource: FeedDataSource, index: Int) {
-        NSLog("configure cell with \(index)")
-        self.index = index
-        configureVideo(dataSource: dataSource)
-    }
+//    public func configure(with dataSource: FeedDataSource, index: Int) {
+//        NSLog("configure cell with \(index)")
+//        self.index = index
+//        configureVideo(dataSource: dataSource)
+//    }
     
-    private func configureVideo(dataSource: FeedDataSource) {
-        guard let asset = dataSource.getVideo(of: index) else {
-            NSLog("configureVideo: couldn't get video asset for \(index)")
-            return
-        }
+    public func configure(with cellModel: VideoCellModel) {
+        guard let asset = cellModel.asset else { return }
+        
         let playerItem = AVPlayerItem(asset: asset)
 
         if player != nil {
@@ -66,10 +92,35 @@ class VideoCollectionViewCell: UICollectionViewCell {
         contentView.layer.addSublayer(playerLayer!)
     }
     
+//    private func configureVideo(dataSource: FeedDataSource) {
+//        guard let asset = dataSource.getVideo(of: index) else {
+//            NSLog("configureVideo: couldn't get video asset for \(index)")
+//            return
+//        }
+//        let playerItem = AVPlayerItem(asset: asset)
+//
+//        if player != nil {
+//            NSLog("reuse player. count: \(AVPlayer.instanceCount)")
+//            player!.replaceCurrentItem(with: playerItem)
+//        } else {
+//            AVPlayer.instanceCount += 1
+//            NSLog("create new player. count: \(AVPlayer.instanceCount)")
+//            player = AVPlayer(playerItem: playerItem)
+//        }
+//        
+//        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player!.currentItem)
+//        
+//        playerLayer = AVPlayerLayer(player: player)
+//        playerLayer!.frame = contentView.bounds
+//        playerLayer!.videoGravity = .resizeAspectFill
+//        
+//        contentView.layer.addSublayer(playerLayer!)
+//    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        NSLog("prepareForReuse: \(index)")
+        //NSLog("prepareForReuse: \(index)")
         
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         

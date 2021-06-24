@@ -30,88 +30,77 @@ class FeedUIController: UIViewController {
     }
     
     private lazy var headerView: FeedUIHeaderStackView = {
-        let view = FeedUIHeaderStackView(items: viewModel.getTags(), delegate: self)
+        let view = FeedUIHeaderStackView(viewModel: viewModel.headerViewModel, delegate: self)
         view.translatesAutoresizingMaskIntoConstraints = false        
         return view
     } ()
     
     private lazy var feedCollectionView: FeedUIImageCollectionView = {
-        let view = FeedUIImageCollectionView(viewModel: viewModel)
+        let view = FeedUIImageCollectionView(viewModel: viewModel.imageViewModel, delegate: self)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.feedInfoDelegate = self
         return view
     }()
     
-    private var viewDidAppearOnce: Bool = false
-    
-    func setupHeaderViews() {
+    func setupViews() {
         view.addSubview(headerView)
+        view.addSubview(feedCollectionView)
+        view.backgroundColor = FeedUIController.backgroundColor
         
         let safeLayoutGuide = view.safeAreaLayoutGuide
         
-        layoutConstraints.append(
-            contentsOf: [
-                headerView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-                headerView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-                headerView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-                headerView.heightAnchor.constraint(equalToConstant: 52),
-                ]
-        )
+        NSLayoutConstraint.activate([
+            headerView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
+            headerView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+            headerView.heightAnchor.constraint(equalToConstant: 52),
+            feedCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+            feedCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+            feedCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+            feedCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor),
+        ])
     }
     
-    func setupFeedView() {
-        view.addSubview(feedCollectionView)
+    func setupBinder() {
+        viewModel.$loadImageViewIfNeeded.bind = { [weak self] _ in
+            guard let self = self else { return }
+            self.feedCollectionView.reload(with: self.viewModel.imageViewModel)
+        }
         
-        let safeLayoutGuide = view.safeAreaLayoutGuide
-
-        layoutConstraints.append(
-            contentsOf: [
-                feedCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-                feedCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-                feedCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-                feedCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor),
-                ]
-        )
+        viewModel.$updateImageViewIfNeeded.bind = { [weak self] _ in
+            guard let self = self else { return }
+            self.feedCollectionView.update(with: self.viewModel.imageViewModel)
+        }
+        
+        viewModel.$headerViewModel.bind = { [weak self] headerViewModel in
+            self?.headerView.update(with: headerViewModel)
+        }
+        
+        viewModel.headerViewModel.$selectedCategory.bind = { [weak self] _ in
+            guard let self = self else { return }
+            self.feedCollectionView.setContentOffsetToZero()
+            self.feedCollectionView.reload(with: self.viewModel.imageViewModel)
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = FeedUIController.backgroundColor
                 
-        setupHeaderViews()
-        setupFeedView()
-        
-        NSLayoutConstraint.activate(layoutConstraints)
-        
-        self.viewModel.changedTag = { [weak self] in
-            self?.feedCollectionView.setContentOffsetToZero()
-        }
-        
-        self.viewModel.reloaded = { [weak self] in
-            self?.feedCollectionView.reloadData()
-        }
-        
-        self.viewModel.fetched = { [weak self] in
-            guard let self = self else { return }
-            self.headerView.update(with: (self.viewModel.getTags()))
-        }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        if !viewDidAppearOnce { // workaround
-            headerView.selectItem(at: 0)            
-            viewDidAppearOnce = true
-        }
+        setupViews()
+        setupBinder()
     }
 }
 
 extension FeedUIController: FeedUIHeaderStackViewDelegate {
-    func select(tag: String) -> Void {
-        viewModel.filter(by: tag)        
+    func initialSelectedIndex() -> Int {
+        0
+    }
+    
+    func select(category: String) -> Void {
+        viewModel.updateImageViewModel(byFiltering: category)
     }
     
     func search(with text: String) -> Void {
-        viewModel.filter(with: text)
+        viewModel.updateImageViewModel(with: text)
     }
     
     func closeButtonTapped() {
@@ -120,9 +109,14 @@ extension FeedUIController: FeedUIHeaderStackViewDelegate {
 }
 
 extension FeedUIController: FeedInfoDelegate {
+    func pullUpToRefresh() {
+        viewModel.fetchFeedSources()
+    }
+    
     func select(at index: Int) -> Void {
-        let controller = FeedViewController()        
-        controller.setDataSource(sources: viewModel.filteredSources, startIndex: index)
+        viewModel.updateVideoViewModel()
+        
+        let controller = FeedViewController(viewModel: viewModel.videoViewModel, startIndex: index)
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
     }
