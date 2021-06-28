@@ -114,9 +114,15 @@ extension FeedUIController: FeedInfoDelegate {
     }
     
     func select(at index: Int) -> Void {
-        viewModel.updateVideoViewModel()
+//        viewModel.updateVideoViewModel()
         
-        let controller = FeedViewController(viewModel: viewModel.videoViewModel, startIndex: index)
+        let videoList = viewModel.videoList
+        guard index >= 0 && index < videoList.count else {
+            print("FeedInfoDelegate.select: invalid index! \(index). video count: \(videoList.count)")
+            return
+        }
+        
+        let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: videoList, start: index))
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
     }

@@ -8,9 +8,7 @@
 import UIKit
 
 class FeedViewController: UIViewController {
-    
-    //private var collectionView: UICollectionView?
-    
+
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -53,7 +51,18 @@ class FeedViewController: UIViewController {
     
     private var currentIndex = -1
     private var scrollTo = -1
-    private var viewModel: FeedVideoViewModel
+    
+    private var videoManager: VideoCollectionViewModel
+    
+    init(videoManager: VideoCollectionViewModel) {
+        self.videoManager = videoManager
+        currentIndex = videoManager.currentVideo
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
         
     func setupViews() {
         view.addSubview(collectionView)
@@ -63,21 +72,6 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-    }
-    
-    init(viewModel: FeedVideoViewModel, startIndex: Array<FeedDataInfo>.Index) {
-        self.viewModel = viewModel
-        
-        super.init(nibName: nil, bundle: nil)
-        
-        if viewModel.cellModels.indices.contains(startIndex) {
-            self.currentIndex = startIndex
-            viewModel.cellModel(for: IndexPath(row: startIndex, section: 0)).load()
-        }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     @objc internal func closeButtonTapped(_ sender: Any) {
@@ -93,28 +87,24 @@ class FeedViewController: UIViewController {
     }
     
     func playVideo(indexPath: IndexPath) {
-        if let displayCell = collectionView.cellForItem(at: indexPath) as? VideoCollectionViewCell {
+        if let _ = collectionView.cellForItem(at: indexPath) as? VideoCollectionViewCell {
             currentIndex = indexPath.row
-            displayCell.player?.play()
+            videoManager.setCurrentVideo(currentIndex)
         }
     }
 }
 
 extension FeedViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.cellCount
+        return videoManager.videoCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
-        
-        cell.configure(with: viewModel.cellModel(for: indexPath))
-        
         NSLog("Cell for \(indexPath) requested.")
-        if currentIndex == indexPath.row {
-            NSLog("cellForItemAt: Start playing: \(currentIndex)")
-            cell.player?.play()
-        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
+
+        cell.configure(with: videoManager, index: indexPath.row)
+        
         return cell
     }
 }
@@ -128,10 +118,6 @@ extension FeedViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         NSLog("didEndDisplaying \(indexPath.row), CurrentIndex: \(currentIndex), newIndex: \(scrollTo)")
-        if let cell = cell as? VideoCollectionViewCell {
-            cell.player?.pause()
-            cell.player?.seek(to: .zero)
-        }
         
         playVideo(indexPath: IndexPath(row: scrollTo, section: 0))
     }
@@ -140,8 +126,7 @@ extension FeedViewController: UICollectionViewDelegate {
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let newIndex = Int(round(targetContentOffset.pointee.x / UIScreen.main.bounds.size.width))
         NSLog("scrollViewWillEndDragging CurrentIndex: \(currentIndex), newIndex: \(newIndex)")
-        //checkStartPlay(collectionView: collectionView!, newIndex: newIndex)
-        
+       
         playVideo(indexPath: IndexPath(row: newIndex, section: 0))
     }
     
@@ -153,9 +138,6 @@ extension FeedViewController: UICollectionViewDelegate {
 extension FeedViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         NSLog("prefetchItemsAt \(indexPaths)")
-        for indexPath in indexPaths {
-            viewModel.cellModel(for: indexPath).load()
-        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {

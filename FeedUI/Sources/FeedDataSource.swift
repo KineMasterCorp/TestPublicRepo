@@ -94,7 +94,7 @@ class FeedDataSource {
     
     func getDataInfo(of index: Int) -> FeedDataInfo? {
         return videos[index]
-    }    
+    }
     
     static func fetch() -> FeedDataSource {
         return FeedDataSource(videos: [
