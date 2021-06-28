@@ -14,10 +14,10 @@ protocol CellDelegate: AnyObject {
 
 class VideoCollectionViewCell: UICollectionViewCell {
     static let identifier = "VideoCollectionViewCell"
-    // Subviews
-    var player: AVPlayer?
-    //var index: Int = -1
+
     private var playerLayer: AVPlayerLayer?
+    private var videoManager: VideoCollectionViewModel!
+    private var videoIndex = 0
     
 //    private lazy var vStackView: UIStackView = {
 //        let stackView = UIStackView()
@@ -59,32 +59,14 @@ class VideoCollectionViewCell: UICollectionViewCell {
     }
     
     deinit {
-        player = nil
-        AVPlayer.instanceCount -= 1
+        print("videoCell \(videoIndex) deinit")
     }
-
-//    public func configure(with dataSource: FeedDataSource, index: Int) {
-//        NSLog("configure cell with \(index)")
-//        self.index = index
-//        configureVideo(dataSource: dataSource)
-//    }
     
-    public func configure(with cellModel: VideoCellModel) {
-        guard let asset = cellModel.asset else { return }
-        
-        let playerItem = AVPlayerItem(asset: asset)
-
-        if player != nil {
-            NSLog("reuse player. count: \(AVPlayer.instanceCount)")
-            player!.replaceCurrentItem(with: playerItem)
-        } else {
-            AVPlayer.instanceCount += 1
-            NSLog("create new player. count: \(AVPlayer.instanceCount)")
-            player = AVPlayer(playerItem: playerItem)
-        }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player!.currentItem)
-        
+    public func configure(with videoManager: VideoCollectionViewModel, index: Int) {
+        NSLog("videoCell configure index: \(index)")
+        self.videoManager = videoManager
+        videoIndex = index
+        let player = videoManager.getPlayer(index)
         playerLayer = AVPlayerLayer(player: player)
         playerLayer!.frame = contentView.bounds
         playerLayer!.videoGravity = .resizeAspectFill
@@ -92,51 +74,14 @@ class VideoCollectionViewCell: UICollectionViewCell {
         contentView.layer.addSublayer(playerLayer!)
     }
     
-//    private func configureVideo(dataSource: FeedDataSource) {
-//        guard let asset = dataSource.getVideo(of: index) else {
-//            NSLog("configureVideo: couldn't get video asset for \(index)")
-//            return
-//        }
-//        let playerItem = AVPlayerItem(asset: asset)
-//
-//        if player != nil {
-//            NSLog("reuse player. count: \(AVPlayer.instanceCount)")
-//            player!.replaceCurrentItem(with: playerItem)
-//        } else {
-//            AVPlayer.instanceCount += 1
-//            NSLog("create new player. count: \(AVPlayer.instanceCount)")
-//            player = AVPlayer(playerItem: playerItem)
-//        }
-//        
-//        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player!.currentItem)
-//        
-//        playerLayer = AVPlayerLayer(player: player)
-//        playerLayer!.frame = contentView.bounds
-//        playerLayer!.videoGravity = .resizeAspectFill
-//        
-//        contentView.layer.addSublayer(playerLayer!)
-//    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        //NSLog("prepareForReuse: \(index)")
-        
-        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
-        
-        player = nil
-        AVPlayer.instanceCount -= 1
+        NSLog("prepareForReuse index: \(videoIndex)")
+
+        videoManager?.doneUsingPlayer(videoIndex)
         playerLayer?.player = nil   // Workaround code for old devices like iPhone 5s.
                                     // If we scroll the screen very fast, only black screen is shown on the device with playing only audio.
         playerLayer?.removeFromSuperlayer()
     }
-    
-    @objc private func playerDidFinishPlaying() {
-        player?.seek(to: CMTime.zero)
-        player?.play()
-    }
-}
-
-extension AVPlayer {
-    static var instanceCount: Int = 0
 }

@@ -154,6 +154,14 @@ class FeedUIViewModel {
         })
     }
     
+    var videoList: [FeedDataInfo] {
+        if let infos = filteredDataInfos {
+            return infos
+        } else {
+            return [FeedDataInfo]()
+        }
+    }
+    
     internal func updateImageViewModel(byFiltering category: String) {
         filteredDataInfos = sources.videos.filter{(video : FeedDataInfo) -> Bool in
             let doesCategoryMatch = (category == "전체") || (video.category == category)
