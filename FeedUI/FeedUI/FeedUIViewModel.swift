@@ -16,17 +16,17 @@ class FeedUIViewModel {
     @BindableObject private(set) var updateImageViewIfNeeded: Bool = false
     
     private(set) var sources = [FeedDataInfo]()
+    private(set) var fetchRequest: FeedDataRequest
     private(set) var imageCollectionViewModel: FeedImageCollectionViewModel
     
     private var dummyDataFetcher = DummyFeedDataFetcher()
     private var isLoading: Bool = false
-    private var fetchRequest: FeedDataRequest
     
     init (fetchRequest: FeedDataRequest = .init(target: "전체", type: .category)) {
         self.fetchRequest = fetchRequest
         
         headerViewModel = FeedHeaderViewModel(cellModels: [CategoryCellModel]())
-        imageCollectionViewModel = FeedImageCollectionViewModel(cellModels: [FeedImageCellModel]())
+        imageCollectionViewModel = FeedImageCollectionViewModel(cellModels: [FeedImageCellModel]())        
     }
     
     private func updateCategoryViewModel() {

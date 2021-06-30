@@ -39,23 +39,53 @@ class FeedUIController: UIViewController {
         return view
     }()
     
+    private lazy var backBarButtonItem: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        button.tintColor = .white
+        return button
+    } ()
+    
+    private lazy var titleView: UILabel = {
+        let title = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
+        title.textColor = .white
+        title.textAlignment = .center
+        title.text = "#" + viewModel.fetchRequest.target
+        title.font = UIFont.systemFont(ofSize: 17)
+        return title
+    } ()
+    
     func setupViews() {
-        view.addSubview(headerView)
         view.addSubview(imageCollectionView)
         view.backgroundColor = FeedUI.backgroundColor
         
         let safeLayoutGuide = view.safeAreaLayoutGuide
+        var collectionViewTopAnchor = safeLayoutGuide.topAnchor
         
-        NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 52),
-            imageCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-            imageCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-            imageCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-            imageCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor),
-        ])
+        if viewModel.fetchRequest.type == .category {
+            view.addSubview(headerView)
+            
+            layoutConstraints.append(
+                contentsOf: [headerView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
+                             headerView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+                             headerView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+                             headerView.heightAnchor.constraint(equalToConstant: 52)])
+            
+            collectionViewTopAnchor = headerView.bottomAnchor
+        }
+        
+        layoutConstraints.append(
+            contentsOf: [imageCollectionView.topAnchor.constraint(equalTo: collectionViewTopAnchor),
+                         imageCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+                         imageCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+                         imageCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor)])
+        
+        NSLayoutConstraint.activate(layoutConstraints)
+    }
+    
+    func setupNavigationBar() {
+        navigationItem.titleView = titleView
+        navigationItem.backBarButtonItem = backBarButtonItem
+        navigationController?.navigationBar.tintColor = .clear
     }
     
     func setupBinder() {
@@ -84,6 +114,17 @@ class FeedUIController: UIViewController {
                 
         setupViews()
         setupBinder()
+        setupNavigationBar()
+        
+        if viewModel.fetchRequest.type == .tag {
+            viewModel.fetch(with: viewModel.fetchRequest)
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if viewModel.fetchRequest.type == .category {
+            navigationController?.isNavigationBarHidden = true
+        }
     }
 }
 
@@ -110,10 +151,14 @@ extension FeedUIController: FeedInfoDelegate {
         viewModel.fetchNext()
     }
     
-    func select(at index: Int) -> Void {        
+    func select(at index: Int) -> Void {
+        guard viewModel.sources.indices.contains(index) else {
+            print("FeedInfoDelegate.select: invalid index! \(index). video count: \(viewModel.sources.count)")
+            return
+        }
+        
         let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: viewModel.sources, start: index, videoCache: videoCache))
-
-        controller.modalPresentationStyle = .fullScreen
-        present(controller, animated: true)
+                
+        navigationController?.pushViewController(controller, animated: true)
     }
 }

@@ -27,24 +27,9 @@ class FeedViewController: UIViewController {
         return view
     }()
     
-    private lazy var closeButton: UIButton = {
-        let button = UIButton()
-        var image: UIImage?
-
-        if #available(iOS 13, *) {
-            image = UIImage(systemName: "xmark")
-        } else {
-            image = UIImage(named: "xmark")
-        }
-
-        button.frame = CGRect(x: view.frame.width - 100, y: 10, width: 52, height: 52)
-        button.setImage(image, for: .normal)
+    private lazy var backBarButtonItem: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         button.tintColor = .white
-        button.backgroundColor = .black.withAlphaComponent(0.3)
-        button.layer.cornerRadius = 0.5 * button.bounds.size.width
-        button.clipsToBounds = true
-        button.addTarget(target, action: #selector(closeButtonTapped), for: .touchUpInside)
-
         return button
     } ()
     
@@ -56,6 +41,7 @@ class FeedViewController: UIViewController {
     init(videoManager: VideoCollectionViewModel) {
         self.videoManager = videoManager
         currentIndex = videoManager.currentVideo
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,18 +51,24 @@ class FeedViewController: UIViewController {
         
     func setupViews() {
         view.addSubview(collectionView)
-        view.addSubview(closeButton)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        
+        setNavigationBar()
     }
     
-    @objc internal func closeButtonTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+    private func setNavigationBar() {
+        navigationController?.isNavigationBarHidden = false
+        
+        let bar = navigationController?.navigationBar
+        bar?.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        bar?.shadowImage = UIImage()
+        bar?.backgroundColor = UIColor.clear
     }
-    
+        
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
@@ -102,6 +94,14 @@ extension FeedViewController: UICollectionViewDataSource {
         NSLog("Cell for \(indexPath) requested.")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
 
+        cell.tagTapCallBack = { [weak self] (string, wordType) in
+            print("tap hash : \(string) \(wordType)")
+            let vc = FeedUIController(viewModel: FeedUIViewModel(fetchRequest: FeedDataRequest(target: string, type: .tag)), onDismiss: nil)
+            
+            self?.navigationItem.backBarButtonItem = self?.backBarButtonItem            
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }
+        
         cell.configure(with: videoManager, index: indexPath.row)
         
         return cell

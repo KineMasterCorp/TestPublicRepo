@@ -14,4 +14,9 @@ struct FeedUI {
                                          alpha: 1)
 }
 
-
+extension FeedUI {
+    struct Category {
+        static let selectedColor = UIColor.hexStringToUIColor(hex: "#ff5b5b")
+        static let defaultColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.05)
+    }
+}

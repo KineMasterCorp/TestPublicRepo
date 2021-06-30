@@ -7,15 +7,6 @@
 
 import UIKit
 
-//struct FeedViewModel {
-//    let hewaderViewModel: FeedHeaderViewModel
-//    let cellModels: [FeedViewCellModel]
-//}
-
-
-
-
-
 class FeedUICategoryCollectionView: UIView {
     private var cellModels: [CategoryCellModel]
     private weak var delegate: FeedUICategoryDelegate?
@@ -76,7 +67,7 @@ class FeedUICategoryCollectionView: UIView {
     private var selectedCell: FeedUICategoryCell? {
         didSet {
             if let cell = oldValue, cell != selectedCell {
-                cell.backgroundColor = defaultColor
+                cell.backgroundColor = FeedUI.Category.defaultColor
                 cell.categoryLabel.textColor = .white
                 cell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
             }
@@ -84,7 +75,7 @@ class FeedUICategoryCollectionView: UIView {
         
         willSet {
             if let cell = newValue {
-                cell.backgroundColor = selectedColor
+                cell.backgroundColor = FeedUI.Category.selectedColor
                 cell.categoryLabel.textColor = .black
                 cell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
                 delegate?.select(category: cellModels[selectedIndex].category)
@@ -101,9 +92,6 @@ class FeedUICategoryCollectionView: UIView {
         
         self.collectionView.insertItems(at: indexPaths)
     }
-    
-    private var selectedColor = UIColor.hexStringToUIColor(hex: "#ff5b5b")
-    private var defaultColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 0.05)
 }
 
 extension FeedUICategoryCollectionView: UICollectionViewDataSource, UICollectionViewDelegate {
