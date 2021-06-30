@@ -10,18 +10,18 @@ import UIKit
 class FeedUIImageCollectionView: UIView {
     public weak var feedInfoDelegate: FeedInfoDelegate?
         
-    private var viewModel: FeedImageViewModel
+    private var viewModel: FeedImageCollectionViewModel
     
     private lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: PinterestLayout())
         view.register(FeedUIImageCell.self, forCellWithReuseIdentifier: FeedUIImageCell.reuseIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = FeedUIController.backgroundColor
+        view.backgroundColor = FeedUI.backgroundColor
         
         return view
     }()
     
-    init(viewModel: FeedImageViewModel, delegate: FeedInfoDelegate?) {
+    init(viewModel: FeedImageCollectionViewModel, delegate: FeedInfoDelegate?) {
         self.viewModel = viewModel
         self.feedInfoDelegate = delegate
         
@@ -70,12 +70,12 @@ class FeedUIImageCollectionView: UIView {
         collectionView.setContentOffset(.zero, animated: false)
     }
     
-    func reload(with viewModel: FeedImageViewModel) {
+    func reload(with viewModel: FeedImageCollectionViewModel) {
         self.viewModel = viewModel
         collectionView.reloadData()
     }
     
-    func update(with updatedViewModel: FeedImageViewModel?) {
+    func update(with updatedViewModel: FeedImageCollectionViewModel?) {
         if let updatedViewModel = updatedViewModel {
             let lastInArray = viewModel.cellModels.count
             

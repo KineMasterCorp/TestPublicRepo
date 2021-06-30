@@ -34,7 +34,7 @@ class FeedUICategoryCollectionView: UIView {
         let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: categoryLayout)
         view.register(FeedUICategoryCell.self, forCellWithReuseIdentifier: FeedUICategoryCell.reuseIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = FeedUIController.backgroundColor
+        view.backgroundColor = FeedUI.backgroundColor
         return view
     }()
     

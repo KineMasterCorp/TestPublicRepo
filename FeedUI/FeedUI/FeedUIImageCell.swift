@@ -39,7 +39,7 @@ class FeedUIImageCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func configure(with cellModel: ImageCellModel) {
+    public func configure(with cellModel: FeedImageCellModel) {
         titleLabel.text = cellModel.title
         imageView.image = ImageCache.publicCache.placeholderImage
         

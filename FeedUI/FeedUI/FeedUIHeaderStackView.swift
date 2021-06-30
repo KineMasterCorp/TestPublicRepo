@@ -125,7 +125,7 @@ class FeedUIHeaderStackView: UIView {
         searchBar.delegate = self
         
         searchBar.placeholder = "Search"
-        searchBar.barTintColor = FeedUIController.backgroundColor
+        searchBar.barTintColor = FeedUI.backgroundColor
         searchBar.showsCancelButton = true
         searchBar.tintColor = .white
         
