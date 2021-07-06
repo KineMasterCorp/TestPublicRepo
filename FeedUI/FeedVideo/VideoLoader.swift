@@ -8,44 +8,142 @@
 import AVFoundation
 
 class VideoLoader: NSObject {
-    private var urlSchemePrefix: String
+    private let urlSchemePrefix: String
+    private let httpLoader: HTTPLoader
+    private let videoCache: VideoCache
+    private var loadingRequests = [AVAssetResourceLoadingRequest]()
 
     init(urlSchemePrefix: String) {
         self.urlSchemePrefix = urlSchemePrefix
+        httpLoader = HTTPLoader()
+        videoCache = VideoCache()
+        
+        super.init()
+        httpLoader.delegate = self
     }
-    func preload(url: URL) {
-        let orgURL = url.absoluteString.replacingOccurrences(of: urlSchemePrefix, with: "")
-        NSLog("preload input url: \(url.path), original url: \(orgURL)")
+    
+    func load(url: URL, length: Int? = nil) {   // Load called for the file that has highest priority.
+        let cachedSize = videoCache.getDataLength(for: url)
+        let contentLength = videoCache.getContentLength(for: url)
+    
+        let loaded = checkLoaded(url: url, length: length, cachedSize: cachedSize, contentLength: contentLength)
+        
+        NSLog("[VideoLoader] load: url: \(url.lastPathComponent), length: \(length ?? -1), loaded: \(loaded), cached: \(cachedSize), contentLength: \(contentLength ?? -1)")
+        
+        guard !loaded else { return }
+
+        httpLoader.load(url: url, offset: cachedSize, length: length)   // load the remaining file except the cached data.
     }
 
-    func cancelLoading(except url: URL) {
-        NSLog("cancelLoading except url: \(url.lastPathComponent)")
+    func cancelLoading(except url: URL? = nil) {
+        NSLog("[VideoLoader] cancelLoading except url: \(url?.lastPathComponent ?? "nil")")
+        httpLoader.cancelAllRequests(except: url)
+    }
+    
+    private func checkLoaded(url: URL, length: Int?, cachedSize: Int, contentLength: Int64?) -> Bool {
+        var loaded = false
+
+        if let length = length, length <= cachedSize {
+            loaded = true
+        } else if let contentLength = contentLength, cachedSize >= contentLength {
+            loaded = true
+        }
+        return loaded
+    }
+    
+    private func getVideoURL(from fakeURL: URL?) -> URL? {
+        guard let videoURLString = fakeURL?.absoluteString.replacingOccurrences(of: urlSchemePrefix, with: "") else { return nil }
+        return URL(string: videoURLString)
+    }
+    
+    private func checkRespond(to request: AVAssetResourceLoadingRequest) -> Bool {
+        guard let url = getVideoURL(from: request.request.url),
+              let response = videoCache.getResponse(for: url),
+              let dataRequest = request.dataRequest else {
+            return false
+        }
+        let requestCurrentOffset = Int(dataRequest.currentOffset)
+        let requestedOffset = Int(dataRequest.requestedOffset)
+        let requestLength = dataRequest.requestedLength - (requestCurrentOffset - requestedOffset)
+        guard requestLength > 0,
+              let contentLength = videoCache.getContentLength(for: url),
+              let data = videoCache.getData(for: url, offset: requestCurrentOffset, length: requestLength) else {
+            return false
+        }
+        if request.contentInformationRequest != nil {
+            request.contentInformationRequest?.isByteRangeAccessSupported = true
+            request.contentInformationRequest?.contentType = response.mimeType
+            request.contentInformationRequest?.contentLength = contentLength
+            
+            NSLog("[VideoLoader] checkRespond[\(url.lastPathComponent)] content-length: \(contentLength), mimeType: \(response.mimeType ?? "")")
+        }
+        
+        dataRequest.respond(with: data)
+
+        if requestCurrentOffset + data.count >= dataRequest.requestedLength {
+            NSLog("[VideoLoader] checkRespond completed[\(url.lastPathComponent)] req(o: \(requestedOffset), l: \(dataRequest.requestedLength), co: \(requestCurrentOffset)), return \(data.count). Total:  \(requestCurrentOffset + data.count).")
+            request.finishLoading()
+            return true
+        }
+
+        return false
+    }
+    
+    private func checkRespond(to url: URL) {
+        let requests = loadingRequests.filter { getVideoURL(from: $0.request.url) == url }
+        guard !requests.isEmpty else { return }
+        
+        var completedRequests = Set<AVAssetResourceLoadingRequest>()
+        for request in requests {
+            if checkRespond(to: request) {
+                completedRequests.insert(request)
+            }
+        }
+        if !completedRequests.isEmpty {
+            loadingRequests = loadingRequests.filter { !completedRequests.contains($0) }
+            NSLog("[VideoLoader] checkRespond: remain loading request: \(loadingRequests.count)")
+        }
     }
 }
 
 // MARK: - AVAssetResourceLoaderDelegate
 extension VideoLoader: AVAssetResourceLoaderDelegate {
     func resourceLoader(_ resourceLoader: AVAssetResourceLoader, shouldWaitForLoadingOfRequestedResource loadingRequest: AVAssetResourceLoadingRequest) -> Bool {
-        NSLog("resourceLoader shouldWaitForLoadingOfRequestedResource url: \(loadingRequest.request.url?.lastPathComponent ?? "nil")")
-        NSLog("resourceLoader shouldWaitForLoadingOfRequestedResource offset: \(loadingRequest.dataRequest?.requestedOffset ?? -1), length: \(loadingRequest.dataRequest?.requestedLength ?? -1)")
+        guard let dataRequest = loadingRequest.dataRequest,
+              let videoURL = getVideoURL(from: loadingRequest.request.url) else {
+            NSLog("[VideoLoader] resourceLoader invalid param! dataRequest: \(loadingRequest.dataRequest == nil ? "nil" : "ok"), url: \(loadingRequest.request.url?.absoluteString ?? "")")
+            return false
+        }
+        NSLog("[VideoLoader] resourceLoader url: \(videoURL.lastPathComponent), o: \(dataRequest.requestedOffset), l: \(dataRequest.requestedLength), co: \(dataRequest.currentOffset)")
         
-        
-//        if self.urlSession == nil {
-//            self.urlSession = self.createURLSession()
-//            let task = self.urlSession!.dataTask(with: self.url)
-//            task.resume()
-//        }
-//
-//        self.loadingRequests.append(loadingRequest)
-        
+        if checkRespond(to: loadingRequest) {   // Already cached.
+            return true
+        }
+        loadingRequests.append(loadingRequest)
+
+//        load(url: videoURL)
+
         return true
     }
-    
-    func resourceLoader(_ resourceLoader: AVAssetResourceLoader, didCancel loadingRequest: AVAssetResourceLoadingRequest) {
-        NSLog("resourceLoader didCancel url: \(loadingRequest.request.url?.lastPathComponent ?? "nil")")
-        NSLog("resourceLoader didCancel offset: \(loadingRequest.dataRequest?.requestedOffset ?? -1), length: \(loadingRequest.dataRequest?.requestedLength ?? -1)")
-//        if let index = self.loadingRequests.firstIndex(of: loadingRequest) {
-//            self.loadingRequests.remove(at: index)
-//        }
+
+//    func resourceLoader(_ resourceLoader: AVAssetResourceLoader, didCancel loadingRequest: AVAssetResourceLoadingRequest) {
+//        NSLog("[VideoLoader] resourceLoader didCancel url: \(loadingRequest.request.url?.lastPathComponent ?? "nil"), o: \(loadingRequest.dataRequest?.requestedOffset ?? -1), l: \(loadingRequest.dataRequest?.requestedLength ?? -1)")
+//    }
+}
+
+extension VideoLoader: HTTPLoaderDelegate {
+    func didRecvResponse(url: URL, response: URLResponse) {
+        NSLog("[VideoLoader] didRecvResponse for \(url.lastPathComponent), response: \(response)")
+        videoCache.prepare(for: url, with: response)
+    }
+
+    func didRecvData(url: URL, data: Data, offset: Int) {
+        videoCache.storeData(for: url, data: data, offset: offset)
+        checkRespond(to: url)
+    }
+
+    func didComplete(url: URL, error: Error?) {
+        let cached = videoCache.getDataLength(for: url)
+        NSLog("[VideoLoader] didComplete for \(url.lastPathComponent), cached: \(cached), error: \(error?.localizedDescription ?? "none")")
     }
 }

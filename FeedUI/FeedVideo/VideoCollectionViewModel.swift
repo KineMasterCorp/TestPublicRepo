@@ -14,12 +14,16 @@ class VideoCollectionViewModel {
     private var playerManager: PlayerManager
     
     private let fakeURLScheme = "KM-"
+    
+    private let prefetchCount = 3
+    private let preloadingSize = 500*1024
 
     init(sources: [FeedDataInfo], start videoIndex: Int) {
         self.sources = sources
         currentVideo = videoIndex
         videoLoader = VideoLoader(urlSchemePrefix: fakeURLScheme)
         playerManager = PlayerManager(resourceLoaderDelegate: videoLoader, start: videoIndex)
+        prepareLoad(for: videoIndex)
     }
 
     var videoCount: Int {
@@ -30,12 +34,12 @@ class VideoCollectionViewModel {
         return sources[videoIndex]
     }
     
-    func getPlayer(_ videoIndex: Int) -> AVPlayer {
-        NSLog("getPlayer \(videoIndex)")
-//        let fakeURLString = fakeURLScheme + sources[videoIndex].videoURL.absoluteString
-//        let fakeURL = URL(string: fakeURLString) ?? sources[videoIndex].videoURL
-//        return playerManager.preparePlayer(for: fakeURL, videoIndex: videoIndex)
-        return playerManager.preparePlayer(for: sources[videoIndex].videoURL, videoIndex: videoIndex)
+    @discardableResult
+    func preparePlayer(_ videoIndex: Int) -> AVPlayer {
+        NSLog("preparePlayer \(videoIndex)")
+        let fakeURLString = fakeURLScheme + sources[videoIndex].videoURL.absoluteString
+        let fakeURL = URL(string: fakeURLString) ?? sources[videoIndex].videoURL
+        return playerManager.preparePlayer(for: fakeURL, videoIndex: videoIndex)
     }
 
     func doneUsingPlayer(_ videoIndex: Int) {
@@ -43,18 +47,32 @@ class VideoCollectionViewModel {
         playerManager.doneUsingPlayer(videoIndex)
     }
     
+    private func prepareLoad(for videoIndex: Int) {
+        videoLoader.cancelLoading(except: sources[videoIndex].videoURL)
+        videoLoader.load(url: sources[videoIndex].videoURL)
+        
+        // Set prefetch.
+        preload()
+    }
+    
     func setCurrentVideo(_ videoIndex: Int) {
         NSLog("setCurrentVideo: new video \(videoIndex), current video \(currentVideo)")
         guard currentVideo != videoIndex else { return }
         
+        prepareLoad(for: videoIndex)
+        
         currentVideo = videoIndex
-        videoLoader.cancelLoading(except: sources[videoIndex].videoURL)
         playerManager.play(at: videoIndex)
-//        for i in (index+1...index+3) {
-//            if i >= sources.count {
-//                break
-//            }
-//            videoLoader.preload(url: sources[i].videoURL)
-//        }
+    }
+    
+    private func preload() {
+        for i in (1...prefetchCount) {
+            if currentVideo + i < sources.count {
+                videoLoader.load(url: sources[currentVideo + i].videoURL, length: preloadingSize)
+            }
+            if currentVideo - i >= 0 {
+                videoLoader.load(url: sources[currentVideo - i].videoURL, length: preloadingSize)
+            }
+        }
     }
 }

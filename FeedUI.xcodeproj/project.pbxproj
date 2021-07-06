@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1F0172FD268161FC00D167A7 /* HTTPLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0172FC268161FC00D167A7 /* HTTPLoader.swift */; };
 		1F0172FF2681620200D167A7 /* VideoLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0172FE2681620200D167A7 /* VideoLoader.swift */; };
-		1F0173012681624700D167A7 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0173002681624700D167A7 /* RequestManager.swift */; };
 		1F0173272681ACEE00D167A7 /* HTTPLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0173262681ACEE00D167A7 /* HTTPLoaderTests.swift */; };
 		1FC9F5222684584500EB5865 /* HTTPFileLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC9F5212684584500EB5865 /* HTTPFileLoader.swift */; };
 		1FC9F524268468B900EB5865 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC9F523268468B900EB5865 /* HTTPRequest.swift */; };
@@ -57,7 +56,6 @@
 /* Begin PBXFileReference section */
 		1F0172FC268161FC00D167A7 /* HTTPLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPLoader.swift; sourceTree = "<group>"; };
 		1F0172FE2681620200D167A7 /* VideoLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoLoader.swift; sourceTree = "<group>"; };
-		1F0173002681624700D167A7 /* RequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
 		1F0173242681ACEE00D167A7 /* HTTPLoaderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HTTPLoaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F0173262681ACEE00D167A7 /* HTTPLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPLoaderTests.swift; sourceTree = "<group>"; };
 		1F0173282681ACEE00D167A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -204,12 +202,11 @@
 				1FC9F5212684584500EB5865 /* HTTPFileLoader.swift */,
 				1F0172FC268161FC00D167A7 /* HTTPLoader.swift */,
 				1FC9F523268468B900EB5865 /* HTTPRequest.swift */,
-				1F0173002681624700D167A7 /* RequestManager.swift */,
 				92AC76E02665D43000239211 /* VideoCollectionViewCell.swift */,
 				1FC9F525268482C700EB5865 /* VideoCollectionViewModel.swift */,
 				1FC9F52926861EAF00EB5865 /* PlayerManager.swift */,
-				1F0172FE2681620200D167A7 /* VideoLoader.swift */,
 				1FC9F5272684875D00EB5865 /* VideoCache.swift */,
+				1F0172FE2681620200D167A7 /* VideoLoader.swift */,
 			);
 			path = FeedVideo;
 			sourceTree = "<group>";
@@ -378,7 +375,6 @@
 				92A7033626783BB600C526F9 /* SequentialBackgroundView.swift in Sources */,
 				92AC76E32665D43000239211 /* FeedViewController.swift in Sources */,
 				9230753C265B9A9D00D411B2 /* PinterestLayout.swift in Sources */,
-				1F0173012681624700D167A7 /* RequestManager.swift in Sources */,
 				92A7033426783B9100C526F9 /* ImageQueueProvider.swift in Sources */,
 				929F6E3E266DF3860008CA69 /* FeedUIImage.swift in Sources */,
 				92AE5711266F4F5500DD163B /* Extensions.swift in Sources */,

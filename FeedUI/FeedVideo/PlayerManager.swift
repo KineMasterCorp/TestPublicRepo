@@ -43,7 +43,7 @@ class PlayerInfo: NSObject {
     func preparePlayer() -> AVPlayer {
         playerLoadTime = DispatchTime.now().uptimeNanoseconds
         let asset = AVURLAsset(url: videoURL)
-        asset.resourceLoader.setDelegate(resourceLoaderDelegate, queue: DispatchQueue.main)
+        asset.resourceLoader.setDelegate(resourceLoaderDelegate, queue: DispatchQueue.global())
         let playerItem = AVPlayerItem(asset: asset)
         player = AVPlayer(playerItem: playerItem)
 
@@ -120,6 +120,7 @@ class PlayerManager {
         currentVideo = videoIndex
     }
     
+    @discardableResult
     func preparePlayer(for url: URL, videoIndex: Int) -> AVPlayer {
         if let playerInfo = getPlayerInfo(byVideoIndex: videoIndex) {
             if let player = playerInfo.getPlayer() {
