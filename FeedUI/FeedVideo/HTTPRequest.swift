@@ -26,6 +26,7 @@ class HTTPRequest {
     private var dataOffset = 0
 
     private var data = Data()
+    private var downloadTick: UInt64 = 0
 
     init(url: URL, offset: Int, length: Int?, priority: Int, loader: HTTPFileLoader) {
         self.url = url
@@ -69,11 +70,13 @@ class HTTPRequest {
             // else: let's donwload the range as it is.
         }
         
-        NSLog("calcDownloadRange ReqRange[\(offset), \(length ?? -1)], PrevRange[\(requestOffset), \(requestLength ?? -1)], FinalRange[\(finalOffset), \(finalLength ?? -1)]")
+        NSLog("[HTTPRequest] calcDownloadRange ReqRange[\(offset), \(length ?? -1)], PrevRange[\(requestOffset), \(requestLength ?? -1)], FinalRange[\(finalOffset), \(finalLength ?? -1)]")
         return (finalOffset, finalLength)
     }
     
     func load() {
+        downloadTick = DispatchTime.now().uptimeNanoseconds
+        NSLog("[HTTPRequest] load: url: \(url.lastPathComponent), offset: \(requestOffset), length: \(requestLength ?? -1)")
         state = .loading
         task = loader.prepareLoadingTask(url: url, offset: requestOffset, length: requestLength)
         loader.startLoading(using: task!)
@@ -95,12 +98,20 @@ class HTTPRequest {
     func didReceive(data: Data) {
         delegate?.didRecvData(url: url, data: data, offset: dataOffset)
         dataOffset += data.count
+        
+//        let elapsed = Double(DispatchTime.now().uptimeNanoseconds - downloadTick) / 1000000000
+//        let bw = Int(Double(dataOffset) * 8 / elapsed)
+//        NSLog("[HTTPRequest] didReceive: url: \(url.lastPathComponent), elapsed: \(elapsed.formatted), bw: \(bw)")
     }
 
     func didComplete(error: Error?) {
         state = .completed
         self.error = error
         delegate?.didComplete(url: url, error: error)
+        
+        let elapsed = Double(DispatchTime.now().uptimeNanoseconds - downloadTick) / 1000000000
+        let bw = Double(dataOffset) * 8 / elapsed
+        NSLog("[HTTPRequest] didComplete: url: \(url.lastPathComponent), elapsed: \(elapsed.formatted), bw: \(bw)")
     }
 }
 

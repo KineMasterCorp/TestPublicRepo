@@ -7,115 +7,12 @@
 
 import AVFoundation
 
-protocol PlayerDelegate: AnyObject {
-    func didPlayToEndTime(playerInfo: PlayerInfo)
-    func playbackLikelyToKeepUp(playerInfo: PlayerInfo)
-}
-
-class PlayerInfo: NSObject {
-    var videoIndex: Int
-    var videoURL: URL
-    var resourceLoaderDelegate: AVAssetResourceLoaderDelegate
-    weak var playerDelegate: PlayerDelegate?
-    var isPlaying = false
-    
-    private var player: AVPlayer?
-    private var playbackLikelyToKeepUpContext = 0
-    private var playerLoadTime: UInt64 = 0
-    private var didFinishPlayingObserver: NSObjectProtocol?
-
-    init(videoURL: URL, videoIndex: Int, resourceLoaderDelegate: AVAssetResourceLoaderDelegate) {
-        self.videoURL = videoURL
-        self.videoIndex = videoIndex
-        self.resourceLoaderDelegate = resourceLoaderDelegate
-    }
-    
-    deinit {
-        NSLog("PlayerInfo \(videoIndex) deinit")
-        player?.removeObserver(self, forKeyPath: "currentItem.playbackLikelyToKeepUp")
-        
-        if didFinishPlayingObserver != nil {
-            NotificationCenter.default.removeObserver(didFinishPlayingObserver as Any)
-            didFinishPlayingObserver = nil
-        }
-    }
-    
-    func preparePlayer() -> AVPlayer {
-        playerLoadTime = DispatchTime.now().uptimeNanoseconds
-        let asset = AVURLAsset(url: videoURL)
-        asset.resourceLoader.setDelegate(resourceLoaderDelegate, queue: DispatchQueue.global())
-        let playerItem = AVPlayerItem(asset: asset)
-        player = AVPlayer(playerItem: playerItem)
-
-        player!.addObserver(self, forKeyPath: "currentItem.playbackLikelyToKeepUp",
-                options: .new, context: &playbackLikelyToKeepUpContext)
-
-        return player!
-    }
-    func getPlayer() -> AVPlayer? {
-        return player
-    }
-    
-    func play() {
-        isPlaying = true
-        if didFinishPlayingObserver == nil {
-            didFinishPlayingObserver = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem, queue: nil) { [weak self] _ in
-                guard let self = self else { return }
-                self.playerDelegate?.didPlayToEndTime(playerInfo: self)
-            }
-        }
-
-        player?.play()
-    }
-    
-    func replay() {
-        isPlaying = true
-        player?.seek(to: .zero) { [weak self] _ in
-            self?.play()
-        }
-    }
-    
-    func stop() {
-        if didFinishPlayingObserver != nil {
-            NotificationCenter.default.removeObserver(didFinishPlayingObserver as Any)
-            didFinishPlayingObserver = nil
-        }
-        player?.pause()
-        player?.seek(to: .zero)
-        
-        isPlaying = false
-    }
-
-    @objc private func playerDidFinishPlaying() {
-        playerDelegate?.didPlayToEndTime(playerInfo: self)
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &playbackLikelyToKeepUpContext {
-            let elapsed = Int((DispatchTime.now().uptimeNanoseconds - playerLoadTime) / 1000000)
-            if player?.currentItem?.isPlaybackLikelyToKeepUp == true {
-                NSLog("Player \(videoIndex) ready to play. elapsed: \(elapsed), buffer: \(bufferDuration)")
-                playerDelegate?.playbackLikelyToKeepUp(playerInfo: self)
-            } else {
-                NSLog("Player \(videoIndex) is not ready yet. elapsed: \(elapsed), buffer: \(bufferDuration)")
-            }
-        }
-    }
-    
-    private var bufferDuration: Float64 {
-        if let range = player?.currentItem?.loadedTimeRanges.first?.timeRangeValue {
-            return CMTimeGetSeconds(range.duration)
-        }
-        return 0
-    }
-}
-
 class PlayerManager {
     private var players = [PlayerInfo]()
-    private var resourceLoaderDelegate: AVAssetResourceLoaderDelegate
+    private weak var resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
     private var currentVideo: Int = 0
 
-    init(resourceLoaderDelegate: AVAssetResourceLoaderDelegate, start videoIndex: Int) {
+    init(resourceLoaderDelegate: AVAssetResourceLoaderDelegate?, start videoIndex: Int) {
         self.resourceLoaderDelegate = resourceLoaderDelegate
         currentVideo = videoIndex
     }
@@ -132,8 +29,7 @@ class PlayerManager {
             }
         }
 
-        let playerInfo = PlayerInfo(videoURL: url, videoIndex: videoIndex, resourceLoaderDelegate: resourceLoaderDelegate)
-        playerInfo.playerDelegate = self
+        let playerInfo = PlayerInfo(videoURL: url, videoIndex: videoIndex, resourceLoaderDelegate: resourceLoaderDelegate, playerDelegate: self)
 
         players.append(playerInfo)
 

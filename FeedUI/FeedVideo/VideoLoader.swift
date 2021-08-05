@@ -12,6 +12,7 @@ class VideoLoader: NSObject {
     private let httpLoader: HTTPLoader
     private let videoCache: VideoCache
     private var loadingRequests = [AVAssetResourceLoadingRequest]()
+    private var downloadLogTick: UInt64 = 0
 
     init(urlSchemePrefix: String) {
         self.urlSchemePrefix = urlSchemePrefix
@@ -31,8 +32,10 @@ class VideoLoader: NSObject {
         NSLog("[VideoLoader] load: url: \(url.lastPathComponent), length: \(length ?? -1), loaded: \(loaded), cached: \(cachedSize), contentLength: \(contentLength ?? -1)")
         
         guard !loaded else { return }
+        
+        let newLength = length == nil ? nil : length! - cachedSize
 
-        httpLoader.load(url: url, offset: cachedSize, length: length)   // load the remaining file except the cached data.
+        httpLoader.load(url: url, offset: cachedSize, length: newLength)   // load the remaining file except the cached data.
     }
 
     func cancelLoading(except url: URL? = nil) {
@@ -79,9 +82,15 @@ class VideoLoader: NSObject {
         }
         
         dataRequest.respond(with: data)
+        
+        let readLength = dataRequest.currentOffset + Int64(data.count)
+        let readPercent = Int(Float(readLength) / Float(contentLength) * 100)
+        
+        NSLog("[VideoLoader] checkRespond return: \(data.count) / \(requestLength), read: \(readLength) / \(contentLength) (\(readPercent)%%)")
 
-        if requestCurrentOffset + data.count >= dataRequest.requestedLength {
-            NSLog("[VideoLoader] checkRespond completed[\(url.lastPathComponent)] req(o: \(requestedOffset), l: \(dataRequest.requestedLength), co: \(requestCurrentOffset)), return \(data.count). Total:  \(requestCurrentOffset + data.count).")
+        if data.count >= requestLength {
+            let cachedSize = videoCache.getDataLength(for: url)
+            NSLog("[VideoLoader] checkRespond completed[\(url.lastPathComponent)] req(o: \(requestedOffset), l: \(dataRequest.requestedLength), co: \(requestCurrentOffset)), requestRemain: \(requestLength), return \(data.count). cached: \(cachedSize)")
             request.finishLoading()
             return true
         }
@@ -101,7 +110,6 @@ class VideoLoader: NSObject {
         }
         if !completedRequests.isEmpty {
             loadingRequests = loadingRequests.filter { !completedRequests.contains($0) }
-            NSLog("[VideoLoader] checkRespond: remain loading request: \(loadingRequests.count)")
         }
     }
 }
@@ -115,7 +123,7 @@ extension VideoLoader: AVAssetResourceLoaderDelegate {
             return false
         }
         NSLog("[VideoLoader] resourceLoader url: \(videoURL.lastPathComponent), o: \(dataRequest.requestedOffset), l: \(dataRequest.requestedLength), co: \(dataRequest.currentOffset)")
-        
+
         if checkRespond(to: loadingRequest) {   // Already cached.
             return true
         }
@@ -133,17 +141,25 @@ extension VideoLoader: AVAssetResourceLoaderDelegate {
 
 extension VideoLoader: HTTPLoaderDelegate {
     func didRecvResponse(url: URL, response: URLResponse) {
-        NSLog("[VideoLoader] didRecvResponse for \(url.lastPathComponent), response: \(response)")
+        NSLog("[VideoLoader] didRecvResponse url: \(url.lastPathComponent), response: \(response)")
         videoCache.prepare(for: url, with: response)
+        downloadLogTick = 0
     }
 
     func didRecvData(url: URL, data: Data, offset: Int) {
         videoCache.storeData(for: url, data: data, offset: offset)
+        let now = DispatchTime.now().uptimeNanoseconds
+        let logInterval: UInt64 = 1000000000
+        if now > downloadLogTick + logInterval {
+            downloadLogTick = now
+            let cached = videoCache.getDataLength(for: url)
+            NSLog("[VideoLoader] didRecvData url: \(url.lastPathComponent), offset: \(offset), recv: \(data.count), cached: \(cached)")
+        }
         checkRespond(to: url)
     }
 
     func didComplete(url: URL, error: Error?) {
         let cached = videoCache.getDataLength(for: url)
-        NSLog("[VideoLoader] didComplete for \(url.lastPathComponent), cached: \(cached), error: \(error?.localizedDescription ?? "none")")
+        NSLog("[VideoLoader] didComplete url: \(url.lastPathComponent), cached: \(cached), error: \(error?.localizedDescription ?? "none")")
     }
 }

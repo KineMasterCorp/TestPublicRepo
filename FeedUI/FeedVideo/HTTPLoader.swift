@@ -32,26 +32,31 @@ class HTTPLoader {
             request.delegate = delegate
             requests.append(request)
     
-            NSLog("HTTPLoader.load: New request for \(url.lastPathComponent), o: \(newRange.0), l: \(newRange.1 ?? -1)")
+            NSLog("[HTTPLoader] load: New request for \(url.lastPathComponent), o: \(newRange.0), l: \(newRange.1 ?? -1)")
         } else {
-            NSLog("HTTPLoader.load: Request already exist. url:\(url.lastPathComponent), o: \(offset), l: \(length ?? -1)")
+            NSLog("[HTTPLoader] load: Request already exist. url:\(url.lastPathComponent), o: \(offset), l: \(length ?? -1)")
             return
         }
 
-        if let request = checkDownloadNext() {
-            request.load()
-        }
+        checkDownloadNext()
     }
     
     func cancelAllRequests(except url: URL? = nil) {
-        NSLog("cancelAllRequests: count: \(requests.count)")
+        let beforeCount = requests.count
+        
         var canceledRequests = Set<HTTPRequest>()
         requests.forEach { request in
             if request.url != url {
                 request.cancel()
                 canceledRequests.insert(request)
+            } else if request.state == .none {
+                canceledRequests.insert(request)
             }
         }
+        
+        requests = requests.filter { !canceledRequests.contains($0) }
+        
+        NSLog("[HTTPLoader] cancelAllRequests: count: before: \(beforeCount), after: \(requests.count)")
     }
     
     private func getRequest(byURL url: URL) -> HTTPRequest? {
@@ -76,8 +81,16 @@ class HTTPLoader {
         }
         return (newOffset, newLength)
     }
-    private func checkDownloadNext() -> HTTPRequest? {
-        return requests.first { $0.state == .none }
+    private func checkDownloadNext() {
+        for request in requests {
+            if request.state == .none {
+                NSLog("[HTTPLoader] checkDownloadNext: load request: \(request.url.lastPathComponent), remain: \(requests.count)")
+                request.load()
+                break
+            } else if request.state == .loading {
+                break
+            }
+        }
     }
     
     private func removeCompletedRequests() {
@@ -94,7 +107,7 @@ class HTTPLoader {
 extension HTTPLoader: HTTPFileLoaderDelegate {
     func didReceive(response: URLResponse, on dataTask: URLSessionDataTask) {
         guard let request = getRequest(byTask: dataTask) else {
-            NSLog("didReceive(response): Couldn't find matching request. task: \(dataTask)")
+            NSLog("[HTTPLoader] didReceive(response): Couldn't find matching request. task: \(dataTask)")
             return
         }
         request.didReceive(response: response)
@@ -102,7 +115,7 @@ extension HTTPLoader: HTTPFileLoaderDelegate {
     
     func didReceive(data: Data, on dataTask: URLSessionDataTask) {
         guard let request = getRequest(byTask: dataTask) else {
-            NSLog("didReceive(data): \(data.count) bytes. Couldn't find matching request.")
+            NSLog("[HTTPLoader] didReceive(data): \(data.count) bytes. Couldn't find matching request.")
             return
         }
         request.didReceive(data: data)
@@ -110,9 +123,10 @@ extension HTTPLoader: HTTPFileLoaderDelegate {
     
     func didComplete(with error: Error?, on dataTask: URLSessionDataTask) {
         guard let request = getRequest(byTask: dataTask) else {
-            NSLog("didComplete: Couldn't find matching request. error: \(error?.localizedDescription ?? "none")")
+            NSLog("[HTTPLoader] didComplete: Couldn't find matching request. error: \(error?.localizedDescription ?? "none")")
             return
         }
         request.didComplete(error: error)
+        checkDownloadNext()
     }
 }

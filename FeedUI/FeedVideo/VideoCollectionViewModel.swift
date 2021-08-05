@@ -7,23 +7,27 @@
 
 import AVFoundation
 
-class VideoCollectionViewModel {
+typealias VideoCollectionViewModel = VideoCollectionViewModelNew
+//typealias VideoCollectionViewModel = VideoCollectionViewModelOld
+
+class VideoCollectionViewModelNew {
     private var sources: [FeedDataInfo]
-    private(set) var currentVideo: Int
+    private(set) var currentVideo: Int = -1
     private var videoLoader: VideoLoader
     private var playerManager: PlayerManager
     
     private let fakeURLScheme = "KM-"
     
-    private let prefetchCount = 3
-    private let preloadingSize = 500*1024
+    private let prefetchCount = 2
+    private let preloadingSize = 1100*1024
 
     init(sources: [FeedDataInfo], start videoIndex: Int) {
         self.sources = sources
-        currentVideo = videoIndex
         videoLoader = VideoLoader(urlSchemePrefix: fakeURLScheme)
         playerManager = PlayerManager(resourceLoaderDelegate: videoLoader, start: videoIndex)
-        prepareLoad(for: videoIndex)
+
+        preparePlayer(videoIndex)
+        setCurrentVideo(videoIndex)
     }
 
     var videoCount: Int {
@@ -59,18 +63,20 @@ class VideoCollectionViewModel {
         NSLog("setCurrentVideo: new video \(videoIndex), current video \(currentVideo)")
         guard currentVideo != videoIndex else { return }
         
-        prepareLoad(for: videoIndex)
-        
         currentVideo = videoIndex
+        
+        prepareLoad(for: videoIndex)
         playerManager.play(at: videoIndex)
     }
     
     private func preload() {
         for i in (1...prefetchCount) {
             if currentVideo + i < sources.count {
+                NSLog("setCurrentVideo: preload for \(currentVideo + i), size: \(preloadingSize)")
                 videoLoader.load(url: sources[currentVideo + i].videoURL, length: preloadingSize)
             }
             if currentVideo - i >= 0 {
+                NSLog("setCurrentVideo: preload for \(currentVideo - i), size: \(preloadingSize)")
                 videoLoader.load(url: sources[currentVideo - i].videoURL, length: preloadingSize)
             }
         }
