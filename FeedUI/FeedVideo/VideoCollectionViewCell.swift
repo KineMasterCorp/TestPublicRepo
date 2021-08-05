@@ -66,7 +66,7 @@ class VideoCollectionViewCell: UICollectionViewCell {
         NSLog("videoCell configure index: \(index)")
         self.videoManager = videoManager
         videoIndex = index
-        let player = videoManager.getPlayer(index)
+        let player = videoManager.preparePlayer(index)
         playerLayer = AVPlayerLayer(player: player)
         playerLayer!.frame = contentView.bounds
         playerLayer!.videoGravity = .resizeAspectFill

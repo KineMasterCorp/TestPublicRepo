@@ -19,3 +19,13 @@ extension Bool {
         self.toggle()
     }
 }
+
+extension Double {
+    func format(_ form: String) -> String {
+        String(format: form, self)
+    }
+    
+    var formatted: String {
+        format("%.3f")
+    }
+}

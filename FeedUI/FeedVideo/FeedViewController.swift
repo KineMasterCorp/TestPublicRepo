@@ -22,7 +22,6 @@ class FeedViewController: UIViewController {
         view.isPagingEnabled = true
         view.dataSource = self
         view.delegate = self
-        view.prefetchDataSource = self
         view.contentInsetAdjustmentBehavior = .never
         
         return view
@@ -132,15 +131,5 @@ extension FeedViewController: UICollectionViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollTo = Int(round(scrollView.contentOffset.x / UIScreen.main.bounds.size.width))
-    }
-}
-
-extension FeedViewController: UICollectionViewDataSourcePrefetching {
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        NSLog("prefetchItemsAt \(indexPaths)")
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        NSLog("cancelPrefetchingForItemsAt \(indexPaths)")
     }
 }
