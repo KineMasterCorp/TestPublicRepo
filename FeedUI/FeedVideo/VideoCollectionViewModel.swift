@@ -20,10 +20,10 @@ class VideoCollectionViewModelNew {
     
     private let prefetchCount = 2
     private let preloadingSize = 1100*1024
-
-    init(sources: [FeedDataInfo], start videoIndex: Int) {
+    
+    init(sources: [FeedDataInfo], start videoIndex: Int, videoCache: VideoCache? = nil) {
         self.sources = sources
-        videoLoader = VideoLoader(urlSchemePrefix: fakeURLScheme)
+        videoLoader = VideoLoader(urlSchemePrefix: fakeURLScheme, videoCache: videoCache)
         playerManager = PlayerManager(resourceLoaderDelegate: videoLoader, start: videoIndex)
 
         preparePlayer(videoIndex)

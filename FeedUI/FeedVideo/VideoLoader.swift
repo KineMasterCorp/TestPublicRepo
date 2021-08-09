@@ -10,14 +10,14 @@ import AVFoundation
 class VideoLoader: NSObject {
     private let urlSchemePrefix: String
     private let httpLoader: HTTPLoader
-    private let videoCache: VideoCache
+    private var videoCache: VideoCache
     private var loadingRequests = [AVAssetResourceLoadingRequest]()
     private var downloadLogTick: UInt64 = 0
 
-    init(urlSchemePrefix: String) {
+    init(urlSchemePrefix: String, videoCache: VideoCache? = nil) {
         self.urlSchemePrefix = urlSchemePrefix
         httpLoader = HTTPLoader()
-        videoCache = VideoCache()
+        self.videoCache = videoCache ?? VideoCache()
         
         super.init()
         httpLoader.delegate = self

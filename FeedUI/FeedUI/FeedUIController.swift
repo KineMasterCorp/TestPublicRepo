@@ -16,6 +16,9 @@ class FeedUIController: UIViewController {
     private var layoutConstraints: [NSLayoutConstraint] = .init()
     
     private var viewModel: FeedUIViewModel
+    
+    private var videoCache = VideoCache()
+    
     public var onDismiss: (() -> Void)?
     
     init(viewModel: FeedUIViewModel, onDismiss: (() -> Void)?) {
@@ -122,7 +125,7 @@ extension FeedUIController: FeedInfoDelegate {
             return
         }
         
-        let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: videoList, start: index))
+        let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: videoList, start: index, videoCache: videoCache))
         controller.modalPresentationStyle = .fullScreen
         present(controller, animated: true)
     }
