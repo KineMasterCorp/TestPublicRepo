@@ -69,6 +69,14 @@ class VideoCollectionViewModelNew {
         playerManager.play(at: videoIndex)
     }
     
+    func play() {
+        playerManager.play()
+    }
+    
+    func pause() {
+        playerManager.pause()
+    }
+    
     private func preload() {
         for i in (1...prefetchCount) {
             if currentVideo + i < sources.count {

@@ -9,6 +9,8 @@ import UIKit
 
 class FeedViewController: UIViewController {
 
+    public var interactor: FeedInteractor?
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -25,13 +27,19 @@ class FeedViewController: UIViewController {
         view.contentInsetAdjustmentBehavior = .never
         
         return view
-    }()
+    }()    
+        
+    override func viewWillAppear(_ animated: Bool) {
+        interactor?.dispatch(.viewWillAppear)
+    }
     
-    private lazy var backBarButtonItem: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        button.tintColor = .white
-        return button
-    } ()
+    override func viewDidAppear(_ animated: Bool) {
+        interactor?.dispatch(.viewDidAppear)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        interactor?.dispatch(.viewDidDisappear)
+    }
     
     private var currentIndex = -1
     private var scrollTo = -1
@@ -67,6 +75,7 @@ class FeedViewController: UIViewController {
         bar?.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         bar?.shadowImage = UIImage()
         bar?.backgroundColor = UIColor.clear
+        bar?.topItem?.title = ""
     }
         
     override func viewDidLayoutSubviews() {
@@ -83,6 +92,10 @@ class FeedViewController: UIViewController {
             videoManager.setCurrentVideo(currentIndex)
         }
     }
+    
+    func update(with state: Feed.ViewState) {
+        state.play ? videoManager.play() : videoManager.pause()
+    }
 }
 
 extension FeedViewController: UICollectionViewDataSource {
@@ -95,11 +108,7 @@ extension FeedViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
 
         cell.tagTapCallBack = { [weak self] (string, wordType) in
-            print("tap hash : \(string) \(wordType)")
-            let vc = FeedUIController(viewModel: FeedUIViewModel(fetchRequest: FeedDataRequest(target: string, type: .tag)), onDismiss: nil)
-            
-            self?.navigationItem.backBarButtonItem = self?.backBarButtonItem            
-            self?.navigationController?.pushViewController(vc, animated: true)
+            self?.interactor?.dispatch(.touchTag(tag: string, wordType: wordType))
         }
         
         cell.configure(with: videoManager, index: indexPath.row)

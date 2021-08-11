@@ -11,7 +11,6 @@ class FeedUIController: UIViewController {
     private var layoutConstraints: [NSLayoutConstraint] = .init()
     
     private var viewModel: FeedUIViewModel
-    
     private var videoCache = VideoCache()
     
     public var onDismiss: (() -> Void)?
@@ -38,12 +37,6 @@ class FeedUIController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    private lazy var backBarButtonItem: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        button.tintColor = .white
-        return button
-    } ()
     
     private lazy var titleView: UILabel = {
         let title = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
@@ -84,8 +77,8 @@ class FeedUIController: UIViewController {
     
     func setupNavigationBar() {
         navigationItem.titleView = titleView
-        navigationItem.backBarButtonItem = backBarButtonItem
-        navigationController?.navigationBar.tintColor = .clear
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.topItem?.title = ""
     }
     
     func setupBinder() {
@@ -158,6 +151,10 @@ extension FeedUIController: FeedInfoDelegate {
         }
         
         let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: viewModel.sources, start: index, videoCache: videoCache))
+        
+        let interactor = FeedInteractorImpl(presenter: FeedPresenter(view: controller),
+                                            navigator: FeedNavigatorImpl(viewController: controller))
+        controller.interactor = interactor
                 
         navigationController?.pushViewController(controller, animated: true)
     }

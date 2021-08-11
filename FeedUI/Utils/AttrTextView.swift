@@ -9,7 +9,7 @@
 
 import UIKit
 
-enum wordType{
+public enum wordType {
     case hashtag
     case mention
 }

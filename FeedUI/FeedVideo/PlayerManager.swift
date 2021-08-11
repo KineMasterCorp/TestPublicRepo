@@ -62,6 +62,14 @@ class PlayerManager {
             }
         }
     }
+    
+    func pause() {
+        players.first(where: { $0.videoIndex == currentVideo })?.pause()
+    }
+    
+    func play() {
+        players.first(where: { $0.videoIndex == currentVideo })?.play()
+    }
 
     private func getPlayerInfo(byVideoIndex videoIndex: Int) -> PlayerInfo? {
         return players.first(where: { $0.videoIndex == videoIndex })
