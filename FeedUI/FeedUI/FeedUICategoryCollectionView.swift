@@ -74,7 +74,7 @@ class FeedUICategoryCollectionView: UIView {
         }
         
         willSet {
-            if let cell = newValue {
+            if let cell = newValue, cell != selectedCell {
                 cell.backgroundColor = FeedUI.Category.selectedColor
                 cell.categoryLabel.textColor = .black
                 cell.categoryLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
