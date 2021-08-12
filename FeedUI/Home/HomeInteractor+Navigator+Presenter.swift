@@ -46,7 +46,7 @@ class HomeInteractorImpl: HomeInteractor {
 class HomePresenter: NSObject {
     weak var view: HomeViewController?
     private var viewState: Home.ViewState = .init()
-        
+    
     init(view: HomeViewController) {
         self.view = view
         super.init()
@@ -117,9 +117,10 @@ public class HomeNavigatorImpl: HomeNavigator {
     
     func presentProjectFeed() {
         if let controller = viewController {
-            let modalView = FeedUIController(viewModel: FeedUIViewModel(), onDismiss: {
+            
+            let modalView = UINavigationController(rootViewController: FeedUIController(viewModel: FeedUIViewModel(), onDismiss: {
                 self.onEvent?(.didDismissProjectFeed)
-            })
+            }))
             
             modalView.modalPresentationStyle = .fullScreen
             controller.present(modalView, animated: true)            

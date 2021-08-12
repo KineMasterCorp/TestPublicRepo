@@ -11,6 +11,7 @@ class PlayerManager {
     private var players = [PlayerInfo]()
     private weak var resourceLoaderDelegate: AVAssetResourceLoaderDelegate?
     private var currentVideo: Int = 0
+    private var userPaused: Bool = false
 
     init(resourceLoaderDelegate: AVAssetResourceLoaderDelegate?, start videoIndex: Int) {
         self.resourceLoaderDelegate = resourceLoaderDelegate
@@ -62,6 +63,16 @@ class PlayerManager {
             }
         }
     }
+    
+    func pause() {
+        players.first(where: { $0.videoIndex == currentVideo })?.pause()
+        userPaused = true
+    }
+    
+    func play() {
+        players.first(where: { $0.videoIndex == currentVideo })?.play()
+        userPaused = false
+    }
 
     private func getPlayerInfo(byVideoIndex videoIndex: Int) -> PlayerInfo? {
         return players.first(where: { $0.videoIndex == videoIndex })
@@ -83,8 +94,8 @@ extension PlayerManager: PlayerDelegate {
     }
     
     func playbackLikelyToKeepUp(playerInfo: PlayerInfo) {
-        NSLog("playbackLikelyToKeepUp called for \(playerInfo.videoIndex), current: \(currentVideo), isPlaying: \(playerInfo.isPlaying)")
-        if currentVideo == playerInfo.videoIndex && playerInfo.isPlaying == false {
+        NSLog("playbackLikelyToKeepUp called for \(playerInfo.videoIndex), current: \(currentVideo), isPlaying: \(playerInfo.isPlaying), userPaused: \(userPaused)")
+        if currentVideo == playerInfo.videoIndex && playerInfo.isPlaying == false, !userPaused {
             playerInfo.play()
         }
     }

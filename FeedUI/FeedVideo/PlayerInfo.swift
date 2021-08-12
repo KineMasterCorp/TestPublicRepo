@@ -61,6 +61,11 @@ class PlayerInfo: NSObject {
         player?.play()
     }
     
+    func pause() {
+        player?.pause()
+        isPlaying = false
+    }
+    
     func replay() {
         isPlaying = true
         player?.seek(to: .zero) { [weak self] _ in

@@ -8,14 +8,11 @@
 import UIKit
 
 class FeedUIController: UIViewController {
-    static let backgroundColor = UIColor(red: CGFloat(31.0/255),
-                                                 green: CGFloat(33.0/255),
-                                                 blue: CGFloat(38.0/255.0),
-                                                 alpha: 1)
-        
     private var layoutConstraints: [NSLayoutConstraint] = .init()
     
     private var viewModel: FeedUIViewModel
+    private var videoCache = VideoCache()
+    
     public var onDismiss: (() -> Void)?
     
     init(viewModel: FeedUIViewModel, onDismiss: (() -> Void)?) {
@@ -35,40 +32,64 @@ class FeedUIController: UIViewController {
         return view
     } ()
     
-    private lazy var feedCollectionView: FeedUIImageCollectionView = {
-        let view = FeedUIImageCollectionView(viewModel: viewModel.imageViewModel, delegate: self)
+    private lazy var imageCollectionView: FeedUIImageCollectionView = {
+        let view = FeedUIImageCollectionView(viewModel: viewModel.imageCollectionViewModel, delegate: self)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
+    private lazy var titleView: UILabel = {
+        let title = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
+        title.textColor = .white
+        title.textAlignment = .center
+        title.text = "#" + viewModel.fetchRequest.target
+        title.font = UIFont.systemFont(ofSize: 17)
+        return title
+    } ()
+    
     func setupViews() {
-        view.addSubview(headerView)
-        view.addSubview(feedCollectionView)
-        view.backgroundColor = FeedUIController.backgroundColor
+        view.addSubview(imageCollectionView)
+        view.backgroundColor = FeedUI.backgroundColor
         
         let safeLayoutGuide = view.safeAreaLayoutGuide
+        var collectionViewTopAnchor = safeLayoutGuide.topAnchor
         
-        NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 52),
-            feedCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
-            feedCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
-            feedCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
-            feedCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor),
-        ])
+        if viewModel.fetchRequest.type == .category {
+            view.addSubview(headerView)
+            
+            layoutConstraints.append(
+                contentsOf: [headerView.topAnchor.constraint(equalTo: safeLayoutGuide.topAnchor),
+                             headerView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+                             headerView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+                             headerView.heightAnchor.constraint(equalToConstant: 52)])
+            
+            collectionViewTopAnchor = headerView.bottomAnchor
+        }
+        
+        layoutConstraints.append(
+            contentsOf: [imageCollectionView.topAnchor.constraint(equalTo: collectionViewTopAnchor),
+                         imageCollectionView.leadingAnchor.constraint(equalTo: safeLayoutGuide.leadingAnchor),
+                         imageCollectionView.trailingAnchor.constraint(equalTo: safeLayoutGuide.trailingAnchor),
+                         imageCollectionView.bottomAnchor.constraint(equalTo: safeLayoutGuide.bottomAnchor)])
+        
+        NSLayoutConstraint.activate(layoutConstraints)
+    }
+    
+    func setupNavigationBar() {
+        navigationItem.titleView = titleView
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.topItem?.title = ""
     }
     
     func setupBinder() {
         viewModel.$loadImageViewIfNeeded.bind = { [weak self] _ in
             guard let self = self else { return }
-            self.feedCollectionView.reload(with: self.viewModel.imageViewModel)
+            self.imageCollectionView.reload(with: self.viewModel.imageCollectionViewModel)
         }
         
         viewModel.$updateImageViewIfNeeded.bind = { [weak self] _ in
             guard let self = self else { return }
-            self.feedCollectionView.update(with: self.viewModel.imageViewModel)
+            self.imageCollectionView.update(with: self.viewModel.imageCollectionViewModel)
         }
         
         viewModel.$headerViewModel.bind = { [weak self] headerViewModel in
@@ -77,8 +98,7 @@ class FeedUIController: UIViewController {
         
         viewModel.headerViewModel.$selectedCategory.bind = { [weak self] _ in
             guard let self = self else { return }
-            self.feedCollectionView.setContentOffsetToZero()
-            self.feedCollectionView.reload(with: self.viewModel.imageViewModel)
+            self.imageCollectionView.setContentOffsetToZero()
         }
     }
     
@@ -87,20 +107,31 @@ class FeedUIController: UIViewController {
                 
         setupViews()
         setupBinder()
+        setupNavigationBar()
+        
+        if viewModel.fetchRequest.type == .tag {
+            viewModel.fetch(with: viewModel.fetchRequest)
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if viewModel.fetchRequest.type == .category {
+            navigationController?.isNavigationBarHidden = true
+        }
     }
 }
 
 extension FeedUIController: FeedUIHeaderStackViewDelegate {
     func initialSelectedIndex() -> Int {
-        0
+        viewModel.defaultInitialCategoryIndex
     }
     
     func select(category: String) -> Void {
-        viewModel.updateImageViewModel(byFiltering: category)
+        viewModel.fetch(with: FeedDataRequest(target: category, type: .category))
     }
     
     func search(with text: String) -> Void {
-        viewModel.updateImageViewModel(with: text)
+        viewModel.fetch(with: FeedDataRequest(target: text, type: .tag))
     }
     
     func closeButtonTapped() {
@@ -110,20 +141,21 @@ extension FeedUIController: FeedUIHeaderStackViewDelegate {
 
 extension FeedUIController: FeedInfoDelegate {
     func pullUpToRefresh() {
-        viewModel.fetchFeedSources()
+        viewModel.fetchNext()
     }
     
     func select(at index: Int) -> Void {
-//        viewModel.updateVideoViewModel()
-        
-        let videoList = viewModel.videoList
-        guard index >= 0 && index < videoList.count else {
-            print("FeedInfoDelegate.select: invalid index! \(index). video count: \(videoList.count)")
+        guard viewModel.sources.indices.contains(index) else {
+            print("FeedInfoDelegate.select: invalid index! \(index). video count: \(viewModel.sources.count)")
             return
         }
         
-        let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: videoList, start: index))
-        controller.modalPresentationStyle = .fullScreen
-        present(controller, animated: true)
+        let controller = FeedViewController(videoManager: VideoCollectionViewModel(sources: viewModel.sources, start: index, videoCache: videoCache))
+        
+        let interactor = FeedInteractorImpl(presenter: FeedPresenter(view: controller),
+                                            navigator: FeedNavigatorImpl(viewController: controller))
+        controller.interactor = interactor
+                
+        navigationController?.pushViewController(controller, animated: true)
     }
 }

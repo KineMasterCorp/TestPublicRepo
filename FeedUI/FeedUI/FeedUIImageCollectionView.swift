@@ -10,18 +10,18 @@ import UIKit
 class FeedUIImageCollectionView: UIView {
     public weak var feedInfoDelegate: FeedInfoDelegate?
         
-    private var viewModel: FeedImageViewModel
+    private var viewModel: FeedImageCollectionViewModel
     
     private lazy var collectionView: UICollectionView = {
         let view = UICollectionView(frame: CGRect.zero, collectionViewLayout: PinterestLayout())
         view.register(FeedUIImageCell.self, forCellWithReuseIdentifier: FeedUIImageCell.reuseIdentifier)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = FeedUIController.backgroundColor
+        view.backgroundColor = FeedUI.backgroundColor
         
         return view
     }()
     
-    init(viewModel: FeedImageViewModel, delegate: FeedInfoDelegate?) {
+    init(viewModel: FeedImageCollectionViewModel, delegate: FeedInfoDelegate?) {
         self.viewModel = viewModel
         self.feedInfoDelegate = delegate
         
@@ -70,33 +70,28 @@ class FeedUIImageCollectionView: UIView {
         collectionView.setContentOffset(.zero, animated: false)
     }
     
-    func reload(with viewModel: FeedImageViewModel) {
+    func reload(with viewModel: FeedImageCollectionViewModel) {
         self.viewModel = viewModel
         collectionView.reloadData()
     }
     
-    func update(with updatedViewModel: FeedImageViewModel?) {
-        if let updatedViewModel = updatedViewModel {
-            let lastInArray = viewModel.cellModels.count
-            
-            let newCells = updatedViewModel.cellModels.filter { newCell in
-                !viewModel.cellModels.contains(where: { originCell in
-                    originCell.url == newCell.url
-                })
-            }
-            
-            self.viewModel.cellModels.append(contentsOf: newCells)
-            let newLastInArray = viewModel.cellModels.count
-            
-            let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
-            
-            self.collectionView.insertItems(at: indexPaths)
-            self.collectionView.bottomRefreshControl?.adjustBottomInset = true
-        } else {
-            self.collectionView.bottomRefreshControl?.adjustBottomInset = false
-        }        
-         
-        self.collectionView.bottomRefreshControl?.endRefreshing()        
+    func update(with updatedViewModel: FeedImageCollectionViewModel) {
+        let lastInArray = viewModel.cellModels.count
+        
+        let newCells = updatedViewModel.cellModels.filter { newCell in
+            !viewModel.cellModels.contains(where: { originCell in
+                originCell.url == newCell.url
+            })
+        }
+        
+        viewModel.cellModels.append(contentsOf: newCells)
+        
+        let newLastInArray = viewModel.cellModels.count        
+        let indexPaths = Array(lastInArray..<newLastInArray).map{IndexPath(item: $0, section: 0)}
+        
+        collectionView.insertItems(at: indexPaths)
+        collectionView.bottomRefreshControl?.adjustBottomInset = true
+        collectionView.bottomRefreshControl?.endRefreshing()
     }
 }
 

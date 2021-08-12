@@ -9,6 +9,8 @@ import UIKit
 
 class FeedViewController: UIViewController {
 
+    public var interactor: FeedInteractor?
+    
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -25,28 +27,19 @@ class FeedViewController: UIViewController {
         view.contentInsetAdjustmentBehavior = .never
         
         return view
-    }()
+    }()    
+        
+    override func viewWillAppear(_ animated: Bool) {
+        interactor?.dispatch(.viewWillAppear)
+    }
     
-    private lazy var closeButton: UIButton = {
-        let button = UIButton()
-        var image: UIImage?
-
-        if #available(iOS 13, *) {
-            image = UIImage(systemName: "xmark")
-        } else {
-            image = UIImage(named: "xmark")
-        }
-
-        button.frame = CGRect(x: view.frame.width - 100, y: 10, width: 52, height: 52)
-        button.setImage(image, for: .normal)
-        button.tintColor = .white
-        button.backgroundColor = .black.withAlphaComponent(0.3)
-        button.layer.cornerRadius = 0.5 * button.bounds.size.width
-        button.clipsToBounds = true
-        button.addTarget(target, action: #selector(closeButtonTapped), for: .touchUpInside)
-
-        return button
-    } ()
+    override func viewDidAppear(_ animated: Bool) {
+        interactor?.dispatch(.viewDidAppear)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        interactor?.dispatch(.viewDidDisappear)
+    }
     
     private var currentIndex = -1
     private var scrollTo = -1
@@ -56,6 +49,7 @@ class FeedViewController: UIViewController {
     init(videoManager: VideoCollectionViewModel) {
         self.videoManager = videoManager
         currentIndex = videoManager.currentVideo
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,18 +59,34 @@ class FeedViewController: UIViewController {
         
     func setupViews() {
         view.addSubview(collectionView)
-        view.addSubview(closeButton)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setNavigationBar()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
-    @objc internal func closeButtonTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+    @objc func applicationDidBecomeActive(notification: NSNotification) {
+        interactor?.dispatch(.applicationDidBecomeActive)
+    }
+    @objc func applicationDidEnterBackground(notification: NSNotification) {
+        interactor?.dispatch(.applicationDidEnterBackground)
     }
     
+    private func setNavigationBar() {
+        navigationController?.isNavigationBarHidden = false
+        
+        let bar = navigationController?.navigationBar
+        bar?.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        bar?.shadowImage = UIImage()
+        bar?.backgroundColor = UIColor.clear
+        bar?.topItem?.title = ""
+    }
+        
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
@@ -91,6 +101,12 @@ class FeedViewController: UIViewController {
             videoManager.setCurrentVideo(currentIndex)
         }
     }
+    
+    func update(with state: Feed.ViewState) {
+        NSLog("current title: \(String(describing: videoManager.getDataInfo(currentIndex)?.title)), play: \(state.play), modal presented: \(state.modalPresented)")
+        
+        state.play ? videoManager.play() : videoManager.pause()        
+    }
 }
 
 extension FeedViewController: UICollectionViewDataSource {
@@ -102,6 +118,10 @@ extension FeedViewController: UICollectionViewDataSource {
         NSLog("Cell for \(indexPath) requested.")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VideoCollectionViewCell.identifier, for: indexPath) as! VideoCollectionViewCell
 
+        cell.tagTapCallBack = { [weak self] (string, wordType) in
+            self?.interactor?.dispatch(.touchTag(tag: string, wordType: wordType))
+        }
+        
         cell.configure(with: videoManager, index: indexPath.row)
         
         return cell

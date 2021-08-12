@@ -12,7 +12,7 @@ class VideoCollectionViewModelOld {
     private(set) var currentVideo: Int = -1
     private var playerManager: PlayerManager
 
-    init(sources: [FeedDataInfo], start videoIndex: Int) {
+    init(sources: [FeedDataInfo], start videoIndex: Int, videoCache: VideoCache? = nil) {
         self.sources = sources
         currentVideo = videoIndex
         playerManager = PlayerManager(resourceLoaderDelegate: nil, start: videoIndex)
@@ -43,5 +43,13 @@ class VideoCollectionViewModelOld {
         
         currentVideo = videoIndex
         playerManager.play(at: videoIndex)
+    }
+    
+    func play() {
+        playerManager.play()
+    }
+    
+    func pause() {
+        playerManager.pause()
     }
 }
