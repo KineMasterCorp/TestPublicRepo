@@ -64,8 +64,17 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        
         setNavigationBar()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+    }
+    
+    @objc func applicationDidBecomeActive(notification: NSNotification) {
+        interactor?.dispatch(.applicationDidBecomeActive)
+    }
+    @objc func applicationDidEnterBackground(notification: NSNotification) {
+        interactor?.dispatch(.applicationDidEnterBackground)
     }
     
     private func setNavigationBar() {
@@ -94,7 +103,9 @@ class FeedViewController: UIViewController {
     }
     
     func update(with state: Feed.ViewState) {
-        state.play ? videoManager.play() : videoManager.pause()
+        NSLog("current title: \(String(describing: videoManager.getDataInfo(currentIndex)?.title)), play: \(state.play), modal presented: \(state.modalPresented)")
+        
+        state.play ? videoManager.play() : videoManager.pause()        
     }
 }
 

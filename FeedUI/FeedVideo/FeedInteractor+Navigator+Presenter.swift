@@ -38,6 +38,10 @@ class FeedInteractorImpl: FeedInteractor {
             break
         case .viewDidDisappear:
             break
+        case .applicationDidBecomeActive:
+            break
+        case .applicationDidEnterBackground:
+            break
         }
     }
     
@@ -59,20 +63,37 @@ class FeedPresenter: NSObject {
     }
     
     public func present(action: Feed.Action) {
+        var updated: Bool = false
         switch action {
         case .touchTag:
             viewState.play = false
+            viewState.modalPresented = true
+            updated = true
         case .dismissModal:
             break
         case .viewWillAppear:
             viewState.play = true
+            viewState.modalPresented = false
+            updated = true
         case .viewDidAppear:
             break
         case .viewDidDisappear:
             break
+        case .applicationDidBecomeActive:
+            if !viewState.modalPresented {
+                viewState.play = true
+                updated = true
+            }            
+        case .applicationDidEnterBackground:
+            if !viewState.modalPresented, viewState.play {
+                viewState.play = false
+                updated = true
+            }
         }
         
-        view?.update(with: viewState)
+        if updated {
+            view?.update(with: viewState)
+        }        
     }
 }
 
@@ -93,6 +114,8 @@ public struct Feed {
         case viewWillAppear
         case viewDidAppear
         case viewDidDisappear
+        case applicationDidBecomeActive
+        case applicationDidEnterBackground
         
         case touchTag(tag: String, wordType: wordType)
         case dismissModal
@@ -100,9 +123,11 @@ public struct Feed {
     
     public struct ViewState {
         public var play: Bool
+        public var modalPresented: Bool
         
-        init(play: Bool = true) {
+        init(play: Bool = true, modalPresented: Bool = false) {
             self.play = play
+            self.modalPresented = modalPresented
         }
     }
     
@@ -135,7 +160,7 @@ public class FeedNavigatorImpl: FeedNavigator {
         if let controller = viewController {
             let modalView = FeedUIController(viewModel: FeedUIViewModel(fetchRequest: FeedDataRequest(target: tag, type: .tag)), onDismiss: { self.onEvent?(.didDismissProjectFeed) }
             )
-            
+                        
             modalView.modalPresentationStyle = .fullScreen            
             controller.navigationController?.pushViewController(modalView, animated: true)
         }
