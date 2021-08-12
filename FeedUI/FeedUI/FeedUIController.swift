@@ -42,7 +42,7 @@ class FeedUIController: UIViewController {
         let title = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 52))
         title.textColor = .white
         title.textAlignment = .center
-        title.text = "#" + viewModel.fetchRequest.target
+        title.text = "#" + viewModel.latestFetchRequest.target
         title.font = UIFont.systemFont(ofSize: 17)
         return title
     } ()
@@ -54,7 +54,7 @@ class FeedUIController: UIViewController {
         let safeLayoutGuide = view.safeAreaLayoutGuide
         var collectionViewTopAnchor = safeLayoutGuide.topAnchor
         
-        if viewModel.fetchRequest.type == .category {
+        if viewModel.latestFetchRequest.type == .category {
             view.addSubview(headerView)
             
             layoutConstraints.append(
@@ -109,13 +109,13 @@ class FeedUIController: UIViewController {
         setupBinder()
         setupNavigationBar()
         
-        if viewModel.fetchRequest.type == .tag {
-            viewModel.fetch(with: viewModel.fetchRequest)
+        if viewModel.latestFetchRequest.type == .tag {
+            viewModel.fetch(with: viewModel.latestFetchRequest)
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if viewModel.fetchRequest.type == .category {
+        if nil != viewModel.categoryRequest {
             navigationController?.isNavigationBarHidden = true
         }
     }
@@ -136,6 +136,14 @@ extension FeedUIController: FeedUIHeaderStackViewDelegate {
     
     func closeButtonTapped() {
         onDismiss?()
+    }
+    
+    func searchButtonTapped() {
+        viewModel.fetch(with: FeedDataRequest(target: "", type: .tag))
+    }
+    
+    func searchCancelButtonTapped() {
+        viewModel.fetch(with: viewModel.categoryRequest!)
     }
 }
 

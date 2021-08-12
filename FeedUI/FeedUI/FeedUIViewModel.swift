@@ -16,17 +16,20 @@ class FeedUIViewModel {
     @BindableObject private(set) var updateImageViewIfNeeded: Bool = false
     
     private(set) var sources = [FeedDataInfo]()
-    private(set) var fetchRequest: FeedDataRequest
+    private(set) var latestFetchRequest: FeedDataRequest
+    private(set) var categoryRequest: FeedDataRequest?
     private(set) var imageCollectionViewModel: FeedImageCollectionViewModel
     
     private var dummyDataFetcher = DummyFeedDataFetcher()
     private var isLoading: Bool = false
     
     init (fetchRequest: FeedDataRequest = .init(target: "전체", type: .category)) {
-        self.fetchRequest = fetchRequest
+        self.latestFetchRequest = fetchRequest
+        
+        if fetchRequest.type == .category { categoryRequest = fetchRequest }
         
         headerViewModel = FeedHeaderViewModel(cellModels: [CategoryCellModel]())
-        imageCollectionViewModel = FeedImageCollectionViewModel(cellModels: [FeedImageCellModel]())        
+        imageCollectionViewModel = FeedImageCollectionViewModel(cellModels: [FeedImageCellModel]())
     }
     
     private func updateCategoryViewModel() {
@@ -42,24 +45,26 @@ class FeedUIViewModel {
         }        
     }
     
-    private func updateImageViewModel() {
+    private func updateImageViewModel(sources: [FeedDataInfo]) {
         imageCollectionViewModel = FeedImageCollectionViewModel(cellModels: sources.map {
             FeedImageCellModel(title: $0.title, url: $0.poster)
         })
     }
     
     internal func fetch(with request: FeedDataRequest) {
-        fetchRequest = request
+        latestFetchRequest = request
         
-        sources = DummyFeedDataFetcher.fetch(with: fetchRequest)
+        sources = DummyFeedDataFetcher.fetch(with: latestFetchRequest)
         
-        updateImageViewModel()
+        updateImageViewModel(sources: sources)
         loadImageViewIfNeeded.signal()
         
-        if headerViewModel.selectedCategory != fetchRequest.target {
-            headerViewModel.selectedCategory = fetchRequest.target
+        if latestFetchRequest.type == .category, headerViewModel.selectedCategory != latestFetchRequest.target {
+            headerViewModel.selectedCategory = latestFetchRequest.target
             
             updateCategoryViewModel()
+            
+            categoryRequest = request
         }
     }
        
@@ -67,14 +72,14 @@ class FeedUIViewModel {
         if !self.isLoading {
             self.isLoading = true
             DispatchQueue.global(qos: .userInteractive).async {
-                let appendVideos = DummyFeedDataFetcher.fetch(with: self.fetchRequest, fetchNext: true).filter {
+                let appendVideos = DummyFeedDataFetcher.fetch(with: self.latestFetchRequest, fetchNext: true).filter {
                     !self.sources.contains($0)
                 }
 
                 if 0 < appendVideos.count {
                     self.sources.append(contentsOf: appendVideos)
                     
-                    self.updateImageViewModel()
+                    self.updateImageViewModel(sources: self.sources)
                     self.updateCategoryViewModel()
                 }
                 
