@@ -18,6 +18,8 @@ protocol FeedUISearchDelegate: AnyObject {
 
 protocol FeedUIHeaderStackViewDelegate: FeedUICategoryDelegate, FeedUISearchDelegate {
     func closeButtonTapped()
+    func searchButtonTapped()
+    func searchCancelButtonTapped()
 }
 
 class FeedUIHeaderStackView: UIView {
@@ -161,6 +163,15 @@ class FeedUIHeaderStackView: UIView {
         searchBar.isHidden = false
         searchButton.isHidden = true
         closeButton.isHidden = true
+        
+        delegate?.searchButtonTapped()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        if let cancelButton = searchBar.value(forKey: "cancelButton") as? UIButton {
+            cancelButton.isEnabled = true
+        }
     }
     
     @objc internal func closeButtonTapped(_ sender: Any) {
@@ -184,5 +195,7 @@ extension FeedUIHeaderStackView: UISearchBarDelegate {
         searchBar.isHidden = true
         searchButton.isHidden = false
         closeButton.isHidden = false
+        
+        delegate?.searchCancelButtonTapped()
     }
 }
