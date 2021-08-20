@@ -11,7 +11,7 @@ class FeedUIController: UIViewController {
     private var layoutConstraints: [NSLayoutConstraint] = .init()
     
     private var viewModel: FeedUIViewModel
-    private var videoCache = VideoCache()
+    private var videoCache = VideoCache(capacity: 20)
     
     public var onDismiss: (() -> Void)?
     
