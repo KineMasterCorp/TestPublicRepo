@@ -7,7 +7,7 @@
 
 import Foundation
 
-private class VideoInfo {
+class VideoInfo {
     private(set) var data = Data()
     private(set) var offset = 0
     private(set) var response: URLResponse
@@ -66,38 +66,117 @@ private class VideoInfo {
     }
 }
 
-class VideoCache {
-    private var cache = NSCache<NSString, VideoInfo>()
+class ListNode<Key, Value> {
+    var value: Value
+    var key: Key
+    var next: ListNode?
+    var previous: ListNode?
     
-    func prepare(for url: URL, with response: URLResponse) {
-        if cache.object(forKey: NSString(string: url.absoluteString)) != nil { return }
-        let videoInfo = VideoInfo(response: response)
-        cache.setObject(videoInfo, forKey: NSString(string: url.absoluteString))
+    init(value: Value, key: Key, next: ListNode? = nil, previous: ListNode? = nil) {
+        self.value = value
+        self.key = key
+        self.next = next
+        self.previous = previous
     }
-    
-    func getResponse(for url: URL) -> URLResponse? {
-        guard let videoInfo = cache.object(forKey: NSString(string: url.absoluteString)) else { return nil }
-        return videoInfo.response
-    }
-    
-    func getContentLength(for url: URL) -> Int64? {
-        guard let videoInfo = cache.object(forKey: NSString(string: url.absoluteString)) else { return nil }
-        return videoInfo.contentLength
-    }
+}
 
-    func getData(for url: URL, offset: Int, length: Int?) -> Data? {
-        guard let videoInfo = cache.object(forKey: NSString(string: url.absoluteString)) else { return nil }
-        return videoInfo.getData(from: offset, length: length)
+class QueuedLinkedList<Key, Value> {
+    var head: ListNode<Key, Value>?
+    var tail: ListNode<Key, Value>?
+    var count: Int = 0
+    
+    init() { }
+    
+    func add(_ key: Key, _ value: Value) -> ListNode<Key, Value>? {
+        let node = ListNode(value: value, key: key)
+        count += 1
+        guard let temphead = head, let _ = tail else {
+            head = node; tail = head; return node
+        }
+        
+        temphead.previous = node
+        node.next = temphead
+        head = node
+        return node
     }
     
-    func storeData(for url: URL, data: Data, offset: Int) {
-        guard let videoInfo = cache.object(forKey: NSString(string: url.absoluteString)) else { return }
-        videoInfo.store(data: data, offset: offset)
+    func removeLast() -> ListNode<Key, Value>? {
+        guard let temptail = tail else { return nil }
+        let previous = temptail.previous
+        previous?.next = nil
+        defer {
+            count -= 1
+            tail = previous
+        }
+        return tail
     }
     
-    func getDataLength(for url: URL) -> Int {
-        guard let videoInfo = cache.object(forKey: NSString(string: url.absoluteString)) else { return 0 }
-        return videoInfo.data.count
+    func moveNodeTowardsHead(node: ListNode<Key, Value>) {
+        guard head !== node else { return }
+        if tail === node { tail = node.previous }
+        node.previous?.next = node.next
+        node.next?.previous = node.previous
+        
+        node.next = head
+        node.previous = nil
+        
+        head?.previous = node
+        head = node
+    }
+}
+
+class LRUCache<Key: Hashable, Value>   {
+    var data: [Key: ListNode<Key, Value>] = [:]
+    let list: QueuedLinkedList<Key, Value> = QueuedLinkedList()
+    var maximumSize: Int
+    init(maximumSize: Int) {
+        guard maximumSize > 0 else { fatalError() }
+        self.maximumSize = maximumSize
+    }
+    
+    func add(key: Key, value: Value) {
+        NSLog("lru cache adding - \(key)")
+        if let node = data[key] {
+            list.moveNodeTowardsHead(node: node)
+        } else {
+            guard let node = list.add(key, value) else { fatalError() }
+            data[key] =  node
+        }
+        
+        if list.count > maximumSize {
+            guard let node = list.removeLast() else { return }
+            data[node.key] = nil
+            NSLog("lru cache removing - \(node.key)")
+        }
+    }
+    
+    func get(key: Key) -> Value? {
+        guard let node = data[key] else { return nil }
+        list.moveNodeTowardsHead(node: node)
+        //NSLog("---------------------------------------------")
+        //NSLog("Moved to head - \(node.key)")
+        return node.value
+    }
+    
+    func isValid(key: Key) -> Bool {
+        return data[key] != nil
+    }
+}
+
+class VideoCache {
+    private let cache: LRUCache<String, VideoInfo>
+    
+    init(capacity: Int) {
+        cache = LRUCache<String, VideoInfo>(maximumSize: capacity)
+    }
+    
+    func set(for url: URL, with response: URLResponse) {
+        let videoInfo = VideoInfo(response: response)
+        cache.add(key: url.absoluteString, value: videoInfo)
+    }
+    
+    func cache(for url: URL) -> VideoInfo? {
+        return cache.get(key: url.absoluteString)
     }
     
     func isCompleted(for url: URL) -> (Bool, Error?) {
