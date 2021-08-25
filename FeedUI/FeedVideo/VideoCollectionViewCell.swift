@@ -219,9 +219,9 @@ class VideoCollectionViewCell: UICollectionViewCell {
         return super.hitTest(point, with: event)
     }
 
-    
     @objc internal func downloadButtonTapped(_ sender: Any) {
-        print("downloadButtonTapped")
+        NSLog("downloadButtonTapped")
+        toastMessage("not implemented")
     }
     
     override func prepareForReuse() {
@@ -233,5 +233,64 @@ class VideoCollectionViewCell: UICollectionViewCell {
         playerLayer?.player = nil   // Workaround code for old devices like iPhone 5s.
                                     // If we scroll the screen very fast, only black screen is shown on the device with playing only audio.
         playerLayer?.removeFromSuperlayer()
+    }
+}
+
+class ToastLabel: UILabel {
+    var textInsets = UIEdgeInsets.zero {
+        didSet { invalidateIntrinsicContentSize() }
+    }
+
+    override func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        let insetRect = bounds.inset(by: textInsets)
+        let textRect = super.textRect(forBounds: insetRect, limitedToNumberOfLines: numberOfLines)
+        let invertedInsets = UIEdgeInsets(top: -textInsets.top, left: -textInsets.left, bottom: -textInsets.bottom, right: -textInsets.right)
+
+        return textRect.inset(by: invertedInsets)
+    }
+
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: textInsets))
+    }
+}
+
+extension UIView {
+    public func toastMessage(_ message: String) {
+        let messageLabel = self.toastMessageLabel()
+        messageLabel.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        messageLabel.textColor = .white
+        messageLabel.textAlignment = .center
+        messageLabel.font = UIFont.systemFont(ofSize: 15)
+        messageLabel.text = message
+        
+        addSubview(messageLabel)
+        
+        let saveArea = safeAreaLayoutGuide
+        messageLabel.centerXAnchor.constraint(equalTo: saveArea.centerXAnchor, constant: 0).isActive = true
+        messageLabel.leadingAnchor.constraint(greaterThanOrEqualTo: saveArea.leadingAnchor, constant: 15).isActive = true
+        messageLabel.trailingAnchor.constraint(lessThanOrEqualTo: saveArea.trailingAnchor, constant: -15).isActive = true
+        messageLabel.bottomAnchor.constraint(equalTo: saveArea.bottomAnchor, constant: -30).isActive = true
+        
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseIn, animations: {
+            messageLabel.alpha = 1
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.3, delay: 2.0, options: .curveEaseOut, animations: {
+                messageLabel.alpha = 0
+            }, completion: { _ in
+                messageLabel.removeFromSuperview()
+            })
+        })
+    }
+    
+    private func toastMessageLabel() -> UILabel {
+        let messageLabel = ToastLabel()
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.textAlignment = .center
+        messageLabel.layer.cornerRadius = 5
+        messageLabel.clipsToBounds = true
+        messageLabel.adjustsFontSizeToFitWidth = true
+        messageLabel.numberOfLines = 0
+        messageLabel.textInsets = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        return messageLabel
     }
 }
