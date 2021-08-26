@@ -7,10 +7,7 @@
 
 import AVFoundation
 
-typealias VideoCollectionViewModel = VideoCollectionViewModelNew
-//typealias VideoCollectionViewModel = VideoCollectionViewModelOld
-
-class VideoCollectionViewModelNew {
+class VideoCollectionViewModel {
     private var sources: [FeedDataInfo]
     private(set) var currentVideo: Int = -1
     private var videoLoader: VideoLoader
